@@ -307,22 +307,31 @@ h1 {
     position: absolute;
     width: 50%;
     height: 50%;
-    background-color: var(--color);
     transform-origin: 100% 100%;
-    transform: rotate(calc(45deg * var(--i)));
     clip-path: polygon(0 0, 100% 0, 100% 100%);
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.wheel-segment span {
-    display: block;
-    transform: rotate(22.5deg);
-    color: #111;
+.segment-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: #000;
     font-family: 'Orbitron', sans-serif;
     font-weight: 700;
-    font-size: 1.2em;
+    font-size: 1.4em;
+    text-align: center;
+    user-select: none;
+    pointer-events: none;
+    text-shadow: 
+        -1px -1px 0 #fff,
+        1px -1px 0 #fff,
+        -1px 1px 0 #fff,
+        1px 1px 0 #fff,
+        0 0 5px rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
 }
 
 .wheel-pointer {
@@ -335,7 +344,8 @@ h1 {
     border-bottom: 15px solid transparent;
     border-right: 50px solid #c91616;
     transform: translateY(-50%);
-    z-index: 10;
+    z-index: 11; /* au-dessus de la roue */
+    pointer-events: none; /* ne pas bloquer elementFromPoint */
 }
 
 /* --- Style du message de résultat --- */

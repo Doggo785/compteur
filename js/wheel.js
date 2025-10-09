@@ -1,69 +1,114 @@
 const wheelSegments = [
+    { label: 'HYPE!', color: '#ffd700', hype: true },
+    { label: 'HYPE!', color: '#ffd700', hype: true },
     { label: 'RIEN', color: '#cccccc', hype: false },
     { label: 'RIEN', color: '#aaaaaa', hype: false },
     { label: 'RIEN', color: '#cccccc', hype: false },
-    { label: 'HYPE!', color: '#ffd700', hype: true },
-    { label: 'HYPE!', color: '#ffd700', hype: true },
-    { label: 'HYPE!', color: '#ffd700', hype: true },
-    { label: 'HYPE!', color: '#ffd700', hype: true },
-    { label: 'RIEN', color: '#cccccc', hype: false }
+    { label: 'RIEN', color: '#aaaaaa', hype: false },
+    { label: 'RIEN', color: '#cccccc', hype: false },
+    { label: 'RIEN', color: '#aaaaaa', hype: false }
 ];
 
+// État interne de la roue
+let isSpinning = false;
+let accumulatedRotation = 0;
+
 function generateWheel() {
-    console.log('generateWheel called');
-    console.log(domElements.wheel);
-    const segmentAngle = 360 / wheelSegments.length;
+    const numSegments = wheelSegments.length;
+    const segmentAngle = 360 / numSegments;
+    const radius = 200; // rayon de la roue
+    
     wheelSegments.forEach((segment, i) => {
         const segmentEl = document.createElement('div');
         segmentEl.className = 'wheel-segment';
-        segmentEl.style.setProperty('--color', segment.color);
-        segmentEl.style.setProperty('--i', i);
-        segmentEl.style.transform = `rotate(${segmentAngle * i}deg)`;
+        segmentEl.style.backgroundColor = segment.color;
         
-        const span = document.createElement('span');
-        span.textContent = segment.label;
-        span.style.transform = `rotate(${segmentAngle / 2}deg)`;
-
-        segmentEl.appendChild(span);
+        // Rotation de base pour ce segment
+        const rotation = segmentAngle * i;
+        segmentEl.style.transform = `rotate(${rotation}deg)`;
+        
+        // Données pour la détection
+        segmentEl.dataset.label = segment.label;
+        segmentEl.dataset.hype = String(segment.hype);
+        
+        // Création du texte
+        const textEl = document.createElement('span');
+        textEl.className = 'segment-text';
+        textEl.textContent = segment.label;
+        
+        // Position du texte au milieu du segment
+        textEl.style.transform = `rotate(${segmentAngle / 2}deg) translate(0%, -150%) rotate(${-rotation - (segmentAngle / 2)}deg)`;
+        
+        segmentEl.appendChild(textEl);
         domElements.wheel.appendChild(segmentEl);
     });
 }
 
+// Retourne l'élément <div.wheel-segment> situé sous la pointe du curseur fixe
+function getSegmentUnderPointer() {
+    const spinner = document.querySelector('.wheel-spinner');
+    if (!spinner) return null;
+
+    const rect = spinner.getBoundingClientRect();
+    // On vise le bord droit de la roue, légèrement à l'intérieur (10px)
+    const x = rect.right - 10;
+    const y = rect.top + rect.height / 2;
+    let el = document.elementFromPoint(x, y);
+    while (el && el !== document.body && !el.classList?.contains('wheel-segment')) {
+        el = el.parentElement;
+    }
+    return (el && el.classList?.contains('wheel-segment')) ? el : null;
+}
+
+function revealResultFromSegment(segmentEl) {
+    const label = segmentEl?.dataset?.label ?? 'RIEN';
+    const hype = segmentEl?.dataset?.hype === 'true';
+    const resultMessage = domElements.resultMessage;
+    resultMessage.textContent = label;
+    resultMessage.style.setProperty('--glow-color', hype ? '#ffd700' : '#cccccc');
+    resultMessage.classList.add('visible');
+    if (hype) {
+        startHypeMode();
+    } else if (typeof hypeModeActive !== 'undefined' && hypeModeActive) {
+        // Si on tombe sur un segment non-hype pendant le mode hype, on arrête immédiatement
+        if (typeof stopHypeMode === 'function') stopHypeMode();
+    }
+}
+
 function spinWheel() {
-    console.log('spinWheel called');
-    console.log(domElements.wheel);
-    console.log(domElements.wheelContainer);
+    if (isSpinning) return;
+    isSpinning = true;
+
     domElements.wheelContainer.classList.add('visible');
-    
-    const spinOffset = 1080; // Fait plusieurs tours pour l'effet
-    const randomSpin = Math.random() * 360;
-    const finalRotation = spinOffset + randomSpin;
-    
+
+    // On crée une rotation aléatoire (sans calcul d'atterrissage)
+    const extraTurns = 3 + Math.floor(Math.random() * 4); // 3 à 6 tours complets
+    const extraDegrees = Math.floor(Math.random() * 360); // 0..359°
+    const totalDelta = extraTurns * 360 + extraDegrees;
+    const finalRotation = accumulatedRotation + totalDelta;
+
+    // Lance la rotation
     domElements.wheel.style.transition = 'transform 6s cubic-bezier(0.25, 1, 0.5, 1)';
     domElements.wheel.style.transform = `rotate(${finalRotation}deg)`;
 
-    setTimeout(() => {
-        const segmentAngle = 360 / wheelSegments.length;
-        const landedAngle = finalRotation % 360;
-        const winningSegmentIndex = Math.floor((360 - landedAngle + (segmentAngle / 2)) % 360 / segmentAngle);
-        const winningSegment = wheelSegments[winningSegmentIndex];
+    // À la fin de la transition, on lit réellement le segment pointé
+    const onEnd = () => {
+        // Détection fiable via hit-testing
+        const segmentEl = getSegmentUnderPointer();
+        revealResultFromSegment(segmentEl);
 
-        const resultMessage = domElements.resultMessage;
-        resultMessage.textContent = winningSegment.label;
-        resultMessage.style.setProperty('--glow-color', winningSegment.hype ? '#ffd700' : '#cccccc');
-        resultMessage.classList.add('visible');
-
-        domElements.wheelContainer.classList.remove('visible');
-
-        if (winningSegment.hype) {
-            startHypeMode();
-        }
-
+        // Cache l'overlay et reset la rotation pour le prochain tour
         setTimeout(() => {
-            resultMessage.classList.remove('visible');
+            domElements.resultMessage.classList.remove('visible');
             domElements.wheel.style.transition = 'none';
-            domElements.wheel.style.transform = 'rotate(0deg)';
+            accumulatedRotation = finalRotation % 360;
+            domElements.wheel.style.transform = `rotate(${accumulatedRotation}deg)`;
+            domElements.wheelContainer.classList.remove('visible');
+            // Force reflow pour que la prochaine transition soit bien prise en compte
+            void domElements.wheel.offsetWidth;
+            isSpinning = false;
         }, 2000);
+    };
 
-    }, 6500);
+    domElements.wheel.addEventListener('transitionend', onEnd, { once: true });
 }

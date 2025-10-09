@@ -79,3 +79,8 @@ function updateParticleCount(targetCount) {
         particlesToRemove.forEach(p => p.remove());
     }
 }
+
+// Expose a getter to read the current number of particles
+function getParticleCount() {
+    return particles.length;
+}

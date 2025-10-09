@@ -2,6 +2,7 @@ let hypeModeActive = false;
 let normalBackgroundColorInterval;
 let hypeBackgroundColorInterval;
 let hypeParticleCount = 250; // Nombre de particules pour le mode Hype
+let prevParticleCount = null; // sauvegarde du nombre de particules avant hype
 
 function startHypeMode() {
     if (hypeModeActive) return;
@@ -15,6 +16,10 @@ function startHypeMode() {
         document.body.style.backgroundColor = randomColor;
     }, 150);
 
+    // Mémorise l'état actuel pour restauration
+    try {
+        prevParticleCount = typeof getParticleCount === 'function' ? getParticleCount() : null;
+    } catch {}
     updateParticleCount(hypeParticleCount);
 
     setTimeout(stopHypeMode, 30000); 
@@ -28,17 +33,29 @@ function stopHypeMode() {
     clearInterval(hypeBackgroundColorInterval);
     startNormalBackgroundColorChange();
 
-    updateParticleCount(normalParticleCount);
-    document.body.style.backgroundColor = '#121212';
+    // Restaure le nombre de particules précédent si connu, sinon une valeur par défaut raisonnable
+    const target = (typeof prevParticleCount === 'number' && prevParticleCount >= 0)
+        ? prevParticleCount
+        : 25;
+    updateParticleCount(target);
+    prevParticleCount = null;
+
 }
 
 function startNormalBackgroundColorChange() {
-    normalBackgroundColorInterval = setInterval(() => {
+    // Évite les doublons
+    clearInterval(normalBackgroundColorInterval);
+    const setColor = () => {
         if (hypeModeActive) return;
         const randomHue = Math.floor(Math.random() * 360);
-        const randomColor = `hsl(${randomHue}, 20%, 10%)`; 
+        // Un peu plus visible que 20%/10% mais reste sombre
+        const randomColor = `hsl(${randomHue}, 35%, 14%)`;
         document.body.style.backgroundColor = randomColor;
-    }, 6000);
+    };
+    // Applique immédiatement une couleur
+    setColor();
+    // Puis continue à changer doucement
+    normalBackgroundColorInterval = setInterval(setColor, 6000);
 }
 
 startNormalBackgroundColorChange();
