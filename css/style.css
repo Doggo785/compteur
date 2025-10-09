@@ -1,0 +1,363 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #121212;
+    color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+    transition: background-color 1s ease;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 25px 25px;
+    animation: background-pan 60s linear infinite;
+}
+
+@keyframes background-pan {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 250px 250px;
+    }
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    background: rgba(30, 30, 30, 0.9);
+    border-radius: 15px;
+    padding: 30px 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    z-index: 1;
+}
+
+h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    color: #c91616;
+    text-shadow: 0 0 10px #c91616, 0 0 20px rgba(201, 22, 22, 0.5);
+}
+
+#countdown-timer {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8em;
+    margin-bottom: 30px;
+    color: #ffffff;
+    letter-spacing: 2px;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+}
+
+.progress-container {
+    margin-bottom: 20px;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 1.1em;
+    font-weight: 400;
+}
+
+.progress-label .percentage {
+    font-family: 'Orbitron', sans-serif;
+    color: #00ffaa;
+}
+
+.progress-bar-bg {
+    width: 100%;
+    height: 25px;
+    background-color: #333;
+    border-radius: 25px;
+    padding: 4px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 20px;
+    background: linear-gradient(90deg, #00aaff, #00ffaa);
+    /* === AMÉLIORATION DE LA FLUIDITÉ === */
+    transition: width 0.1s linear;
+}
+
+#main-progress-bar-bg {
+    height: 40px;
+    padding: 5px;
+    margin-top: 10px;
+}
+
+#main-progress-bar {
+    background: linear-gradient(90deg, #ff4d4d, #ffa500, #ffff00, #00ffaa, #00aaff);
+    background-size: 200% 100%;
+    animation: gradient-animation 5s ease infinite;
+    transition: width 0.5s ease-out;
+    /* On garde une transition plus lente pour la barre principale */
+}
+
+@keyframes gradient-animation {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.small-bars-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.time-unit-container .progress-bar-bg {
+    height: 20px;
+}
+
+.progress-bar-days {
+    background: linear-gradient(90deg, #5ee6a8, #9bffd9);
+    box-shadow: 0 0 10px #5ee6a8;
+}
+
+.progress-bar-hours {
+    background: linear-gradient(90deg, #47a1ff, #81c7ff);
+    box-shadow: 0 0 10px #47a1ff;
+}
+
+.progress-bar-minutes {
+    background: linear-gradient(90deg, #ffb347, #ffcf81);
+    box-shadow: 0 0 10px #ffb347;
+}
+
+.progress-bar-seconds {
+    background: linear-gradient(90deg, #ff5e5e, #ff9b9b);
+    box-shadow: 0 0 10px #ff5e5e;
+}
+
+.progress-bar-milliseconds {
+    background: linear-gradient(90deg, #d85bff, #ff9bfb);
+    box-shadow: 0 0 10px #d85bff;
+    transition: none;
+}
+
+
+/* On enlève la transition pour la fluidité parfaite des ms */
+
+@media (max-width: 600px) {
+    .small-bars-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    #countdown-timer {
+        font-size: 1.2em;
+    }
+}
+
+@keyframes dropfox-fall {
+    0% {
+        top: 100%;
+    }
+
+    100% {
+        top: -10%;
+    }
+}
+
+@keyframes dropfox-shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(80px);
+    }
+}
+
+.dropfoxy {
+    z-index: 0;
+    position: fixed;
+    top: -10%;
+    animation-name: dropfox-fall, dropfox-shake;
+    animation-iteration-count: infinite, infinite;
+    animation-timing-function: linear, ease-in-out;
+    cursor: default;
+    user-select: none;
+    animation-play-state: running, running;
+}
+
+.animate-minute {
+    animation: scale-up 0.5s ease-in-out, gold-shine 1.2s ease-in-out 0.3s;
+}
+
+@keyframes scale-up {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+@keyframes gold-shine {
+    0% {
+        color: #e0e0e0;
+        text-shadow: none;
+        background-position: 150% 0;
+    }
+
+    20%,
+    60% {
+        color: transparent;
+        background-image: linear-gradient(to right, #e0e0e0 20%, #ffd700 50%, #e0e0e0 80%);
+        background-size: 200% 100%;
+        background-clip: text;
+        -webkit-background-clip: text;
+        background-position: 50% 0;
+        text-shadow: 0 0 10px #ffd700;
+    }
+
+    100% {
+        color: #e0e0e0;
+        text-shadow: none;
+        background-position: -50% 0;
+    }
+}
+
+/* --- Style de la roue --- */
+.wheel-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s, visibility 0.5s;
+}
+
+.wheel-container.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.wheel-spinner {
+    position: relative;
+    width: 400px;
+    height: 400px;
+}
+
+.wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    border: 8px solid #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    transition: transform 5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.wheel-segment {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    background-color: var(--color);
+    transform-origin: 100% 100%;
+    transform: rotate(calc(45deg * var(--i)));
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wheel-segment span {
+    display: block;
+    transform: rotate(22.5deg);
+    color: #111;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 1.2em;
+}
+
+.wheel-pointer {
+    position: absolute;
+    top: 50%;
+    right: -30px;
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 30px solid #c91616;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+/* --- Style du message de résultat --- */
+.result-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 6em;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 0 10px #000, 0 0 30px var(--glow-color, #fff);
+    z-index: 201;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    pointer-events: none;
+}
+
+.result-message.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
