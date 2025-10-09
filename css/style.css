@@ -109,7 +109,7 @@ h1 {
 }
 
 #main-progress-bar {
-    background: linear-gradient(90deg, #ff4d4d, #ffa500, #ffff00, #00ffaa, #00aaff);
+    background: linear-gradient(90deg, #ff4d4d, #ffa500, #ffff00, #00ff00, #00aaff, #4b0082, #9400d3);
     background-size: 200% 100%;
     animation: gradient-animation 5s ease infinite;
     transition: width 0.5s ease-out;
@@ -199,16 +199,73 @@ h1 {
     }
 }
 
-@keyframes dropfox-shake {
+/* HYPE MODE STYLES */
+@keyframes rgb-text-shadow {
+    0% { text-shadow: 0 0 10px #ff0000, 0 0 20px rgba(255, 0, 0, 0.5); color: #ff0000; }
+    14% { text-shadow: 0 0 10px #ff7f00, 0 0 20px rgba(255, 127, 0, 0.5); color: #ff7f00; }
+    28% { text-shadow: 0 0 10px #ffff00, 0 0 20px rgba(255, 255, 0, 0.5); color: #ffff00; }
+    42% { text-shadow: 0 0 10px #00ff00, 0 0 20px rgba(0, 255, 0, 0.5); color: #00ff00; }
+    57% { text-shadow: 0 0 10px #0000ff, 0 0 20px rgba(0, 0, 255, 0.5); color: #0000ff; }
+    71% { text-shadow: 0 0 10px #4b0082, 0 0 20px rgba(75, 0, 130, 0.5); color: #4b0082; }
+    85% { text-shadow: 0 0 10px #9400d3, 0 0 20px rgba(148, 0, 211, 0.5); color: #9400d3; }
+    100% { text-shadow: 0 0 10px #ff0000, 0 0 20px rgba(255, 0, 0, 0.5); color: #ff0000; }
+}
 
-    0%,
-    100% {
-        transform: translateX(0);
-    }
+@keyframes hype-gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 
-    50% {
-        transform: translateX(80px);
-    }
+.hype-mode-text {
+    animation: rgb-text-shadow 2s linear infinite !important;
+}
+
+.progress-bar.hype-mode-progress {
+    background: linear-gradient(45deg, #ff4d4d, #ffa500, #ffff00, #00ff00, #00aaff, #4b0082, #9400d3, #ffffff, #00d3c8);
+    background-size: 200% 100%;
+	animation: rainbow-bg 2.5s linear;
+	animation-iteration-count: infinite;
+    transition: width 0.1s ease-out;
+}
+
+@keyframes rainbow-bg{
+		100%,0%{
+			background: rgb(255,0,0);
+		}
+		8%{
+			background: rgb(255,127,0);
+		}
+		16%{
+			background: rgb(255,255,0);
+		}
+		25%{
+			background: rgb(127,255,0);
+		}
+		33%{
+			background: rgb(0,255,0);
+		}
+		41%{
+			background: rgb(0,255,127);
+		}
+		50%{
+			background: rgb(0,255,255);
+		}
+		58%{
+			background: rgb(0,127,255);
+		}
+		66%{
+			background: rgb(0,0,255);
+		}
+		75%{
+			background: rgb(127,0,255);
+		}
+		83%{
+			background: rgb(255,0,255);
+		}
+		91%{
+			background: rgb(255,0,127);
+		}
 }
 
 .dropfoxy {

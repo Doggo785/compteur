@@ -9,6 +9,12 @@ function startHypeMode() {
     hypeModeActive = true;
     console.log("HYPE MODE ACTIVÉ !");
 
+    // Appliquer les classes Hype
+    document.querySelector('h1').classList.add('hype-mode-text');
+    document.querySelectorAll('.progress-bar').forEach(bar => {
+        bar.classList.add('hype-mode-progress');
+    });
+
     clearInterval(normalBackgroundColorInterval);
     hypeBackgroundColorInterval = setInterval(() => {
         const randomHue = Math.floor(Math.random() * 360);
@@ -29,6 +35,12 @@ function stopHypeMode() {
     if (!hypeModeActive) return;
     hypeModeActive = false;
     console.log("HYPE MODE DÉSACTIVÉ.");
+
+    // Retirer les classes Hype
+    document.querySelector('h1').classList.remove('hype-mode-text');
+    document.querySelectorAll('.progress-bar').forEach(bar => {
+        bar.classList.remove('hype-mode-progress');
+    });
 
     clearInterval(hypeBackgroundColorInterval);
     startNormalBackgroundColorChange();
