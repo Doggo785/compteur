@@ -328,12 +328,12 @@ h1 {
 .wheel-pointer {
     position: absolute;
     top: 50%;
-    right: -30px;
+    right: -40px;
     width: 0;
     height: 0;
-    border-top: 20px solid transparent;
-    border-bottom: 20px solid transparent;
-    border-left: 30px solid #c91616;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    border-right: 50px solid #c91616;
     transform: translateY(-50%);
     z-index: 10;
 }
