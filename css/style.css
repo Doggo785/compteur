@@ -224,7 +224,7 @@ h1 {
 .progress-bar.hype-mode-progress {
     background: linear-gradient(45deg, #ff4d4d, #ffa500, #ffff00, #00ff00, #00aaff, #4b0082, #9400d3, #ffffff, #00d3c8);
     background-size: 200% 100%;
-	animation: rainbow-bg 2.5s linear;
+	animation: rainbow-bg 1s linear;
 	animation-iteration-count: infinite;
     transition: width 0.1s ease-out;
 }
