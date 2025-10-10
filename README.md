@@ -9,6 +9,8 @@ Ce projet est une application web interactive qui affiche un compte à rebours v
 - **Progression totale** : Une barre principale montre la progression totale entre une date de début et une date cible.
 - **Animations de particules** : Des emojis animés tombent et se déplacent aléatoirement sur l'écran.
 - **Changement de couleur de fond** : Le fond change de couleur aléatoirement toutes les secondes pour une expérience visuelle immersive.
+- **La roue** : Une roue interactive qui génère des effets supplémentaire si le HYPE MODE est activé.
+- **Hype mode** : Mode activable qui intensifie les animations (plus de particules, couleurs vives).
 
 ## Technologies utilisées
 
@@ -18,7 +20,7 @@ Ce projet est une application web interactive qui affiche un compte à rebours v
 
 ## Comment utiliser
 
-1. Ouvrez le fichier `compteurv1.html` dans un navigateur web moderne.
+1. Ouvrez le fichier `compteur.html` dans un navigateur web moderne.
 2. Le compte à rebours commence automatiquement en fonction des dates définies dans le script JavaScript.
 
 ## Personnalisation
