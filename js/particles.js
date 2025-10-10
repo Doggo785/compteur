@@ -93,6 +93,7 @@ function createParticle() {
     img.height = 64;
     particle.appendChild(img);
     document.body.appendChild(particle);
+    console.debug('createParticle: appended', particle);
     return particle;
 }
 
@@ -106,16 +107,29 @@ function randomizeParticle(particle) {
     const randomLeft = Math.random() * 100;
     const randomFallDelay = Math.random() * 10;
     const randomShakeDelay = Math.random() * 3;
+    const randomHorizontalDelay = Math.random() * 4; // delay for horizontal animation
     const randomFallDuration = 8 + Math.random() * 5;
     const randomShakeDuration = 2 + Math.random() * 2;
+    const randomHorizontalDuration = 4 + Math.random() * 6; // horizontal duration
 
     particle.style.left = randomLeft + 'vw';
-    particle.style.animationDelay = `${randomFallDelay}s, ${randomShakeDelay}s`;
-    particle.style.animationDuration = `${randomFallDuration}s, ${randomShakeDuration}s`;
+    // Provide three values (fall, shake, horizontal) for delays and durations
+    particle.style.animationDelay = `${randomFallDelay}s, ${randomShakeDelay}s, ${randomHorizontalDelay}s`;
+    particle.style.animationDuration = `${randomFallDuration}s, ${randomShakeDuration}s, ${randomHorizontalDuration}s`;
 
+    // Reset animations to force reflow
     particle.style.animationName = 'none';
     void particle.offsetWidth;
-    particle.style.animationName = '';
+    // Use the CSS-defined animation names
+    particle.style.animationName = 'dropfox-fall, dropfox-shake, dropfox-horizontal';
+
+    console.debug('randomizeParticle:', {
+        left: particle.style.left,
+        animationDelay: particle.style.animationDelay,
+        animationDuration: particle.style.animationDuration,
+        animationName: particle.style.animationName,
+        imgSrc: img ? img.src : null
+    });
 }
 
 function updateParticleCount(targetCount) {

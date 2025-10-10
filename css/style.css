@@ -269,15 +269,23 @@ h1 {
 }
 
 .dropfoxy {
-    z-index: 0;
+    z-index: 0; 
     position: fixed;
-    top: -10%;
-    animation-name: dropfox-fall, dropfox-shake;
-    animation-iteration-count: infinite, infinite;
-    animation-timing-function: linear, ease-in-out;
+    top: 100%; /* start at bottom so they're visible even before animation starts */
+    animation-name: dropfox-fall, dropfox-shake, dropfox-horizontal;
+    animation-iteration-count: infinite, infinite, infinite;
+    animation-timing-function: linear, ease-in-out, ease-in-out;
     cursor: default;
     user-select: none;
-    animation-play-state: running, running;
+    animation-play-state: running, running, running;
+}
+
+@keyframes dropfox-horizontal {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(3vw); }
+    50% { transform: translateX(-3vw); }
+    75% { transform: translateX(3vw); }
+    100% { transform: translateX(0); }
 }
 
 .animate-minute {
