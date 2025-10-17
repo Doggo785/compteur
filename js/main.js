@@ -1,6 +1,23 @@
 // --- PERSONNALISATION ---
-const dateDebut = new Date('2025-10-07T10:30:00');
-const dateCible = new Date('2025-10-10T13:30:00');
+// Charge la configuration depuis localStorage ou utilise les valeurs par défaut
+function getConfigDates() {
+    if (typeof window.loadConfig === 'function') {
+        const config = window.loadConfig();
+        return {
+            dateDebut: new Date(config.dateDebut),
+            dateCible: new Date(config.dateCible)
+        };
+    }
+    // Valeurs par défaut si config.js n'est pas chargé
+    return {
+        dateDebut: new Date('2025-10-07T10:30:00'),
+        dateCible: new Date('2025-10-10T13:30:00')
+    };
+}
+
+const dates = getConfigDates();
+const dateDebut = dates.dateDebut;
+const dateCible = dates.dateCible;
 const totalMillisecondesIntervalle = dateCible - dateDebut;
 
 // --- Mise en cache des éléments DOM ---

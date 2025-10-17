@@ -10,6 +10,42 @@
 
 <body>
 
+    <!-- Bouton pour ouvrir le panneau de configuration -->
+    <button id="config-btn" class="config-button" title="Configuration">⚙️</button>
+
+    <!-- Panneau de configuration -->
+    <div id="config-panel" class="config-panel">
+        <div class="config-content">
+            <h2>⚙️ Configuration des Dates</h2>
+            
+            <div class="config-section">
+                <label for="date-debut">📅 Date de Début</label>
+                <input type="datetime-local" id="date-debut" class="date-input">
+            </div>
+            
+            <div class="config-section">
+                <label for="date-cible">🎯 Date Cible (Deadline)</label>
+                <input type="datetime-local" id="date-cible" class="date-input">
+            </div>
+            
+            <div class="config-info">
+                <p>ℹ️ Les dates seront sauvegardées automatiquement</p>
+            </div>
+            
+            <div class="config-actions">
+                <button id="save-config-btn" class="btn btn-primary">💾 Sauvegarder</button>
+                <button id="reset-config-btn" class="btn btn-secondary">🔄 Réinitialiser</button>
+                <button id="close-config-btn" class="btn btn-tertiary">❌ Fermer</button>
+            </div>
+            
+            <div class="config-preview">
+                <h3>📊 Aperçu</h3>
+                <p><strong>Durée totale :</strong> <span id="duration-preview">-</span></p>
+                <p><strong>Temps restant :</strong> <span id="remaining-preview">-</span></p>
+            </div>
+        </div>
+    </div>
+
     <div id="result-message" class="result-message"></div>
 
     <div id="wheel-container" class="wheel-container">
@@ -78,6 +114,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <script src="js/config.js"></script>
     <script src="js/main.js"></script>
     <script src="js/particles.js"></script>
     <script src="js/wheel.js"></script>
