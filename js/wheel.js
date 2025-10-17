@@ -1,12 +1,12 @@
 const wheelSegments = [
     { label: 'HYPE!', color: '#ffd700', hype: true },
     { label: 'HYPE!', color: '#ffd700', hype: true },
+    { label: 'MATRIX', color: '#00ff88', matrix: true, hype: false },
     { label: 'RIEN', color: '#cccccc', hype: false },
     { label: 'RIEN', color: '#aaaaaa', hype: false },
     { label: 'RIEN', color: '#cccccc', hype: false },
     { label: 'RIEN', color: '#aaaaaa', hype: false },
-    { label: 'RIEN', color: '#cccccc', hype: false },
-    { label: 'RIEN', color: '#aaaaaa', hype: false }
+    { label: 'RIEN', color: '#cccccc', hype: false }
 ];
 
 // État interne de la roue
@@ -27,9 +27,10 @@ function generateWheel() {
         const rotation = segmentAngle * i;
         segmentEl.style.transform = `rotate(${rotation}deg)`;
         
-        // Données pour la détection
-        segmentEl.dataset.label = segment.label;
-        segmentEl.dataset.hype = String(segment.hype);
+    // Données pour la détection
+    segmentEl.dataset.label = segment.label;
+    segmentEl.dataset.hype = String(!!segment.hype);
+    segmentEl.dataset.matrix = String(!!segment.matrix);
         
         // Création du texte
         const textEl = document.createElement('span');
@@ -63,12 +64,28 @@ function getSegmentUnderPointer() {
 function revealResultFromSegment(segmentEl) {
     const label = segmentEl?.dataset?.label ?? 'RIEN';
     const hype = segmentEl?.dataset?.hype === 'true';
+    const matrix = segmentEl?.dataset?.matrix === 'true';
     const resultMessage = domElements.resultMessage;
     resultMessage.textContent = label;
-    resultMessage.style.setProperty('--glow-color', hype ? '#ffd700' : '#cccccc');
+    // Couleur de glow selon le type
+    const glowColor = matrix ? '#00ff88' : (hype ? '#ffd700' : '#cccccc');
+    resultMessage.style.setProperty('--glow-color', glowColor);
     resultMessage.classList.add('visible');
     if (hype) {
         startHypeMode();
+        // Ne déclenche plus Matrix sur HYPE
+    } else if (matrix) {
+        // Déclencher l'effet Matrix pendant 25 secondes
+        try {
+            const duration = 25000; // 25s
+            if (typeof triggerMatrixTransition === 'function') {
+                triggerMatrixTransition(duration);
+            } else if (window.advancedEffects && typeof window.advancedEffects.triggerMatrixTransition === 'function') {
+                window.advancedEffects.triggerMatrixTransition(duration);
+            }
+        } catch (e) {
+            console.debug('Matrix effect not available:', e);
+        }
     } else if (typeof hypeModeActive !== 'undefined' && hypeModeActive) {
         // Si on tombe sur un segment non-hype pendant le mode hype, on arrête immédiatement
         if (typeof stopHypeMode === 'function') stopHypeMode();

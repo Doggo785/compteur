@@ -11,29 +11,67 @@ Ce projet est une application web interactive qui affiche un compte à rebours v
 - **Changement de couleur de fond** : Le fond change de couleur aléatoirement toutes les secondes pour une expérience visuelle immersive.
 - **La roue** : Une roue interactive qui génère des effets supplémentaire si le HYPE MODE est activé.
 - **Hype mode** : Mode activable qui intensifie les animations (plus de particules, couleurs vives).
+- **📅 Panneau de configuration** : Interface pour modifier les dates sans toucher au code, avec sauvegarde automatique.
+- **✨ Effets avancés** :
+  - **Particules magnétiques** : Particules suivant la souris avec attraction magnétique
+  - **Effet Matrix** : Transition Matrix déclenchée par la roue (segment dédié "MATRIX", durée ~25s)
+  - **Mode critique** : Glitch effect quand il reste moins de 10% du temps
 
 ## Technologies utilisées
 
 - **HTML5** : Structure de la page.
 - **CSS3** : Styles et animations.
 - **JavaScript** : Logique du compte à rebours et animations.
+- **Canvas API** : Effets de particules et Matrix.
 
 ## Comment utiliser
 
 1. Ouvrez le fichier `compteur.html` dans un navigateur web moderne.
 2. Le compte à rebours commence automatiquement en fonction des dates définies dans le script JavaScript.
+3. **Cliquez sur l'icône ⚙️** en haut à droite pour configurer les dates.
+4. **Bougez votre souris** pour voir les particules magnétiques.
+5. **Attendez le mode critique** (<10% du temps restant) pour voir l'effet de glitch.
 
 ## Personnalisation
 
+### Via l'interface (Recommandé)
+- Cliquez sur le bouton ⚙️ en haut à droite
+- Modifiez les dates de début et cible
+- Les changements sont sauvegardés automatiquement dans le navigateur
+
+### Via le code
 - **Dates** :
   - Modifiez la variable `dateDebut` pour définir la date de début.
   - Modifiez la variable `dateCible` pour définir la date cible.
 - **Nombre de particules** :
   - Changez la valeur de `numberOfParticles` dans le script pour ajuster le nombre d'emojis animés.
 
+## Effets Spéciaux
+
+### 🧲 Particules Magnétiques
+Les particules apparaissent au passage de la souris et sont attirées par celle-ci avec un effet d'attraction magnétique.
+
+### 🟢 Effet Matrix
+Une transition matricielle (pluie de caractères verts) se déclenche via un **segment dédié MATRIX** sur la roue et dure environ **25 secondes**.
+
+### ⚠️ Mode Critique (< 10%)
+Quand il reste moins de 10% du temps total :
+- **Glitch effect** sur le titre et le timer
+- **Pulsation rouge** du conteneur
+- **Barres rouges** pulsantes
+- **Effet Matrix** plus fréquent
+- **Distorsion chromatique** RGB
+
+### 🧪 Test du Mode Critique
+Pour tester le mode critique sans attendre, ouvrez la console du navigateur et tapez :
+```javascript
+advancedEffects.testCriticalMode()
+```
+
 ## Pré-requis
 
 - Un navigateur moderne prenant en charge les fonctionnalités CSS3 et JavaScript ES6.
+- Support du Canvas API pour les effets avancés.
 
 ## Aperçu
 
