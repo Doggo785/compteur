@@ -471,8 +471,8 @@ h1 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 120px; /* Zone carrée plus large pour faciliter le hover */
-    height: 120px;
+    width: 80px; /* Zone carrée plus large pour faciliter le hover */
+    height: 80px;
     border-radius: 0; /* Carré, pas de bord arrondi */
     z-index: -1;
 }
