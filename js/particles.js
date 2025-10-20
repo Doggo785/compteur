@@ -133,9 +133,15 @@ function randomizeParticle(particle) {
 }
 
 function updateParticleCount(targetCount) {
+    // Respecte la configuration: si l'effet "emojis qui tombent" est désactivé, on force à 0
+    try {
+        const enabled = (typeof getConfigPath === 'function') ? !!getConfigPath('effects.fallingParticles.enabled', true) : true;
+        if (!enabled) targetCount = 0;
+    } catch {}
+
     const currentCount = particles.length;
-    console.log('updateParticleCount called');
-    console.log(particles);
+    // console.debug('updateParticleCount ->', { currentCount, targetCount });
+
     if (currentCount < targetCount) {
         for (let i = 0; i < targetCount - currentCount; i++) {
             const particle = createParticle();

@@ -72,19 +72,24 @@ function revealResultFromSegment(segmentEl) {
     resultMessage.style.setProperty('--glow-color', glowColor);
     resultMessage.classList.add('visible');
     if (hype) {
-        startHypeMode();
+        // Respecte config hype.enabled
+        const hypeEnabled = (typeof getConfigPath === 'function') ? !!getConfigPath('effects.hype.enabled', true) : true;
+        if (hypeEnabled) startHypeMode();
         // Ne déclenche plus Matrix sur HYPE
     } else if (matrix) {
-        // Déclencher l'effet Matrix pendant 25 secondes
-        try {
-            const duration = 25000; // 25s
-            if (typeof triggerMatrixTransition === 'function') {
-                triggerMatrixTransition(duration);
-            } else if (window.advancedEffects && typeof window.advancedEffects.triggerMatrixTransition === 'function') {
-                window.advancedEffects.triggerMatrixTransition(duration);
+        // Déclencher l'effet Matrix selon config (enabled + durée)
+        const matrixEnabled = (typeof getConfigPath === 'function') ? !!getConfigPath('effects.matrix.enabled', true) : true;
+        if (matrixEnabled) {
+            try {
+                const duration = (typeof getConfigPath === 'function') ? (getConfigPath('effects.matrix.durationMs', 25000) || 25000) : 25000;
+                if (typeof triggerMatrixTransition === 'function') {
+                    triggerMatrixTransition(duration);
+                } else if (window.advancedEffects && typeof window.advancedEffects.triggerMatrixTransition === 'function') {
+                    window.advancedEffects.triggerMatrixTransition(duration);
+                }
+            } catch (e) {
+                console.debug('Matrix effect not available:', e);
             }
-        } catch (e) {
-            console.debug('Matrix effect not available:', e);
         }
     } else if (typeof hypeModeActive !== 'undefined' && hypeModeActive) {
         // Si on tombe sur un segment non-hype pendant le mode hype, on arrête immédiatement
@@ -124,7 +129,7 @@ function spinWheel() {
             // Force reflow pour que la prochaine transition soit bien prise en compte
             void domElements.wheel.offsetWidth;
             isSpinning = false;
-        }, 2000);
+        }, (typeof getConfigPath === 'function') ? (getConfigPath('effects.wheel.resultDisplayMs', 2000) || 2000) : 2000);
     };
 
     domElements.wheel.addEventListener('transitionend', onEnd, { once: true });

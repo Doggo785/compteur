@@ -112,5 +112,13 @@ requestAnimationFrame(miseAJourBarres);
 
 document.addEventListener('DOMContentLoaded', () => {
     generateWheel();
-    updateParticleCount(25); // Initialisation avec 25 particules
+    // Initialise le nombre de particules selon la configuration
+    try {
+        const fallingEnabled = (typeof getConfigPath === 'function') ? !!getConfigPath('effects.fallingParticles.enabled', true) : true;
+        const baseCount = (typeof getConfigPath === 'function') ? (getConfigPath('effects.fallingParticles.baseCount', 25) || 0) : 25;
+        updateParticleCount(fallingEnabled ? baseCount : 0);
+    } catch {
+        // Fallback silencieux
+        updateParticleCount(25);
+    }
 });

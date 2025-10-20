@@ -24,7 +24,7 @@ class MagneticParticle {
             const dx = mouseX - this.x;
             const dy = mouseY - this.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
-            const attractionRadius = 150;
+            const attractionRadius = magneticSystem?.attractionRadius ?? 150;
 
             if (distance < attractionRadius && distance > 0) {
                 const force = (attractionRadius - distance) / attractionRadius;
@@ -78,6 +78,10 @@ class MagneticParticleSystem {
         this.mouseActive = false;
         this.animationId = null;
         this.lastSpawnTime = 0;
+        // paramètres via config
+        this.maxParticles = (typeof getConfigPath === 'function') ? (getConfigPath('effects.magneticParticles.maxParticles', 200) || 200) : 200;
+        this.spawnIntervalMs = (typeof getConfigPath === 'function') ? (getConfigPath('effects.magneticParticles.spawnIntervalMs', 50) || 50) : 50;
+        this.attractionRadius = (typeof getConfigPath === 'function') ? (getConfigPath('effects.magneticParticles.attractionRadius', 150) || 150) : 150;
     }
 
     init() {
@@ -117,7 +121,8 @@ class MagneticParticleSystem {
 
         // Spawn des particules au passage de la souris
         const now = Date.now();
-        if (now - this.lastSpawnTime > 50) { // Une particule tous les 50ms
+        const interval = this.spawnIntervalMs;
+        if (now - this.lastSpawnTime > interval) { // spawn contrôlé par config
             this.particles.push(new MagneticParticle(this.mouseX, this.mouseY));
             this.lastSpawnTime = now;
         }
@@ -137,9 +142,9 @@ class MagneticParticleSystem {
             }
         }
 
-        // Limiter le nombre de particules
-        if (this.particles.length > 200) {
-            this.particles.splice(0, this.particles.length - 200);
+        // Limiter le nombre de particules (config)
+        if (this.particles.length > this.maxParticles) {
+            this.particles.splice(0, this.particles.length - this.maxParticles);
         }
 
         this.animationId = requestAnimationFrame(() => this.animate());
@@ -159,6 +164,11 @@ class MagneticParticleSystem {
 let magneticSystem = null;
 
 function initMagneticParticles() {
+    const enabled = (typeof getConfigPath === 'function') ? !!getConfigPath('effects.magneticParticles.enabled', true) : true;
+    if (!enabled) {
+        console.log('🧲 Particules magnétiques désactivées via configuration');
+        return;
+    }
     if (!magneticSystem) {
         magneticSystem = new MagneticParticleSystem();
         magneticSystem.init();
@@ -367,14 +377,15 @@ function checkCriticalMode() {
     const remaining = dateCible - now;
     const percentageRemaining = (remaining / totalDuration) * 100;
 
-    const criticalThreshold = 10; // Mode critique à 10%
+    const criticalEnabled = (typeof getConfigPath === 'function') ? !!getConfigPath('effects.critical.enabled', true) : true;
+    const criticalThreshold = (typeof getConfigPath === 'function') ? (getConfigPath('effects.critical.thresholdPercent', 10) || 10) : 10;
     const h1Element = document.querySelector('h1');
     const timerElement = document.getElementById('countdown-timer');
     const containerElement = document.querySelector('.container');
     const progressBars = document.querySelectorAll('.progress-bar');
 
     // Mode critique activé
-    if (percentageRemaining < criticalThreshold && percentageRemaining > 0) {
+    if (criticalEnabled && percentageRemaining < criticalThreshold && percentageRemaining > 0) {
         if (!isInCriticalMode) {
             isInCriticalMode = true;
             console.log('⚠️ MODE CRITIQUE ACTIVÉ !');

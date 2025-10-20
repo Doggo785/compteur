@@ -1,13 +1,40 @@
 // ============================================
-// Configuration Panel - Gestion des dates
+// Configuration Panel - Gestion des dates & Effets
 // ============================================
 
 const CONFIG_STORAGE_KEY = 'countdown-config';
 
-// Dates par défaut
+// Configuration par défaut (dates + effets)
 const DEFAULT_CONFIG = {
     dateDebut: '2025-10-07T10:30:00',
-    dateCible: '2025-10-10T13:30:00'
+    dateCible: '2025-10-10T13:30:00',
+    effects: {
+        fallingParticles: {
+            enabled: true,
+            baseCount: 25, // nombre de particules de base (emojis qui tombent)
+        },
+        magneticParticles: {
+            enabled: true,
+            maxParticles: 200, // limite max à l'écran
+            spawnIntervalMs: 50, // délai entre spawns au mouvement (ms)
+            attractionRadius: 150 // rayon d'attraction (px)
+        },
+        matrix: {
+            enabled: true,
+            durationMs: 25000 // durée par défaut (25s)
+        },
+        critical: {
+            enabled: true,
+            thresholdPercent: 10 // seuil d'activation du mode critique (% restant)
+        },
+        hype: {
+            enabled: true,
+            particlesDuringHype: 250 // nombre de particules durant le Hype Mode (si activé)
+        },
+        wheel: {
+            resultDisplayMs: 2000 // durée d'affichage du message de résultat
+        }
+    }
 };
 
 // Charge la configuration depuis localStorage ou utilise les valeurs par défaut
@@ -106,6 +133,50 @@ function initConfigPanel() {
     const currentConfig = loadConfig();
     dateDebutInput.value = formatDateForInput(currentConfig.dateDebut);
     dateCibleInput.value = formatDateForInput(currentConfig.dateCible);
+
+    // Effets -> hydrate UI
+    const $ = (id) => {
+        const el = document.getElementById(id);
+        if (!el) console.warn('Element not found:', id);
+        return el;
+    };
+    
+    if (currentConfig.effects) {
+        const falling = $('cfg-falling-enabled');
+        const fallingCount = $('cfg-falling-count');
+        if (falling) falling.checked = currentConfig.effects.fallingParticles?.enabled ?? true;
+        if (fallingCount) fallingCount.value = currentConfig.effects.fallingParticles?.baseCount ?? 25;
+
+        const magnetic = $('cfg-magnetic-enabled');
+        const magneticMax = $('cfg-magnetic-max');
+        const magneticSpawn = $('cfg-magnetic-spawn');
+        const magneticRadius = $('cfg-magnetic-radius');
+        if (magnetic) magnetic.checked = currentConfig.effects.magneticParticles?.enabled ?? true;
+        if (magneticMax) magneticMax.value = currentConfig.effects.magneticParticles?.maxParticles ?? 200;
+        if (magneticSpawn) magneticSpawn.value = currentConfig.effects.magneticParticles?.spawnIntervalMs ?? 50;
+        if (magneticRadius) magneticRadius.value = currentConfig.effects.magneticParticles?.attractionRadius ?? 150;
+
+        const matrix = $('cfg-matrix-enabled');
+        const matrixDuration = $('cfg-matrix-duration');
+        if (matrix) matrix.checked = currentConfig.effects.matrix?.enabled ?? true;
+        if (matrixDuration) matrixDuration.value = currentConfig.effects.matrix?.durationMs ?? 25000;
+
+        const critical = $('cfg-critical-enabled');
+        const criticalThreshold = $('cfg-critical-threshold');
+        if (critical) critical.checked = currentConfig.effects.critical?.enabled ?? true;
+        if (criticalThreshold) criticalThreshold.value = currentConfig.effects.critical?.thresholdPercent ?? 10;
+
+        const hype = $('cfg-hype-enabled');
+        const hypeParticles = $('cfg-hype-particles');
+        if (hype) hype.checked = currentConfig.effects.hype?.enabled ?? true;
+        if (hypeParticles) hypeParticles.value = currentConfig.effects.hype?.particlesDuringHype ?? 250;
+
+        const wheelResult = $('cfg-wheel-result');
+        if (wheelResult) wheelResult.value = currentConfig.effects.wheel?.resultDisplayMs ?? 2000;
+    } else {
+        console.warn('No effects configuration found, using defaults');
+    }
+
     updatePreview();
     
     // Ouvre le panneau
@@ -128,10 +199,45 @@ function initConfigPanel() {
     
     // Sauvegarde les modifications
     saveBtn.addEventListener('click', () => {
+        const $ = (id) => {
+            const el = document.getElementById(id);
+            if (!el) console.error('Element not found during save:', id);
+            return el;
+        };
+        
         const newConfig = {
             dateDebut: dateDebutInput.value,
-            dateCible: dateCibleInput.value
+            dateCible: dateCibleInput.value,
+            effects: {
+                fallingParticles: {
+                    enabled: $('cfg-falling-enabled')?.checked ?? true,
+                    baseCount: parseInt($('cfg-falling-count')?.value, 10) || 25,
+                },
+                magneticParticles: {
+                    enabled: $('cfg-magnetic-enabled')?.checked ?? true,
+                    maxParticles: parseInt($('cfg-magnetic-max')?.value, 10) || 200,
+                    spawnIntervalMs: parseInt($('cfg-magnetic-spawn')?.value, 10) || 50,
+                    attractionRadius: parseInt($('cfg-magnetic-radius')?.value, 10) || 150,
+                },
+                matrix: {
+                    enabled: $('cfg-matrix-enabled')?.checked ?? true,
+                    durationMs: parseInt($('cfg-matrix-duration')?.value, 10) || 25000,
+                },
+                critical: {
+                    enabled: $('cfg-critical-enabled')?.checked ?? true,
+                    thresholdPercent: parseInt($('cfg-critical-threshold')?.value, 10) || 10,
+                },
+                hype: {
+                    enabled: $('cfg-hype-enabled')?.checked ?? true,
+                    particlesDuringHype: parseInt($('cfg-hype-particles')?.value, 10) || 250,
+                },
+                wheel: {
+                    resultDisplayMs: parseInt($('cfg-wheel-result')?.value, 10) || 2000,
+                }
+            }
         };
+        
+        console.log('Saving configuration:', newConfig);
         
         // Validation
         const debut = new Date(newConfig.dateDebut);
@@ -165,8 +271,35 @@ function initConfigPanel() {
     // Réinitialise aux valeurs par défaut
     resetBtn.addEventListener('click', () => {
         if (confirm('🔄 Êtes-vous sûr de vouloir réinitialiser aux valeurs par défaut ?')) {
-            dateDebutInput.value = formatDateForInput(DEFAULT_CONFIG.dateDebut);
-            dateCibleInput.value = formatDateForInput(DEFAULT_CONFIG.dateCible);
+            const cfg = DEFAULT_CONFIG;
+            dateDebutInput.value = formatDateForInput(cfg.dateDebut);
+            dateCibleInput.value = formatDateForInput(cfg.dateCible);
+
+            const $ = (id) => {
+                const el = document.getElementById(id);
+                if (!el) console.warn('Element not found during reset:', id);
+                return el;
+            };
+            
+            if ($('cfg-falling-enabled')) $('cfg-falling-enabled').checked = cfg.effects.fallingParticles.enabled;
+            if ($('cfg-falling-count')) $('cfg-falling-count').value = cfg.effects.fallingParticles.baseCount;
+
+            if ($('cfg-magnetic-enabled')) $('cfg-magnetic-enabled').checked = cfg.effects.magneticParticles.enabled;
+            if ($('cfg-magnetic-max')) $('cfg-magnetic-max').value = cfg.effects.magneticParticles.maxParticles;
+            if ($('cfg-magnetic-spawn')) $('cfg-magnetic-spawn').value = cfg.effects.magneticParticles.spawnIntervalMs;
+            if ($('cfg-magnetic-radius')) $('cfg-magnetic-radius').value = cfg.effects.magneticParticles.attractionRadius;
+
+            if ($('cfg-matrix-enabled')) $('cfg-matrix-enabled').checked = cfg.effects.matrix.enabled;
+            if ($('cfg-matrix-duration')) $('cfg-matrix-duration').value = cfg.effects.matrix.durationMs;
+
+            if ($('cfg-critical-enabled')) $('cfg-critical-enabled').checked = cfg.effects.critical.enabled;
+            if ($('cfg-critical-threshold')) $('cfg-critical-threshold').value = cfg.effects.critical.thresholdPercent;
+
+            if ($('cfg-hype-enabled')) $('cfg-hype-enabled').checked = cfg.effects.hype.enabled;
+            if ($('cfg-hype-particles')) $('cfg-hype-particles').value = cfg.effects.hype.particlesDuringHype;
+
+            if ($('cfg-wheel-result')) $('cfg-wheel-result').value = cfg.effects.wheel.resultDisplayMs;
+
             updatePreview();
         }
     });
@@ -185,9 +318,35 @@ function initConfigPanel() {
     });
 }
 
-// Exporte les fonctions pour main.js
+// Helpers pour lire/mettre à jour des chemins spécifiques
+function getConfigPath(path, fallback) {
+    const cfg = loadConfig();
+    try {
+        return path.split('.').reduce((acc, key) => acc?.[key], cfg) ?? fallback;
+    } catch {
+        return fallback;
+    }
+}
+
+function updateConfigPath(path, value) {
+    const cfg = loadConfig();
+    const keys = path.split('.');
+    let obj = cfg;
+    for (let i = 0; i < keys.length - 1; i++) {
+        const key = keys[i];
+        if (typeof obj[key] !== 'object' || obj[key] === null) obj[key] = {};
+        obj = obj[key];
+    }
+    obj[keys[keys.length - 1]] = value;
+    saveConfig(cfg);
+    return cfg;
+}
+
+// Exporte les fonctions pour main.js et autres
 window.loadConfig = loadConfig;
 window.saveConfig = saveConfig;
+window.getConfigPath = getConfigPath;
+window.updateConfigPath = updateConfigPath;
 
 // Initialise au chargement du DOM
 if (document.readyState === 'loading') {

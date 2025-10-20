@@ -1,7 +1,7 @@
 let hypeModeActive = false;
 let normalBackgroundColorInterval;
 let hypeBackgroundColorInterval;
-let hypeParticleCount = 250; // Nombre de particules pour le mode Hype
+let hypeParticleCount = (typeof getConfigPath === 'function') ? (getConfigPath('effects.hype.particlesDuringHype', 250) || 250) : 250; // Nombre de particules pour le mode Hype
 let prevParticleCount = null; // sauvegarde du nombre de particules avant hype
 
 function startHypeMode() {
@@ -28,6 +28,7 @@ function startHypeMode() {
     } catch {}
     updateParticleCount(hypeParticleCount);
 
+    // Durée fixe conservée pour le Hype Mode (30s)
     setTimeout(stopHypeMode, 30000); 
 }
 
