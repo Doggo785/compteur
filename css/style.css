@@ -595,6 +595,76 @@ h1 {
     margin-bottom: 25px;
 }
 
+/* Header avec bouton de réinitialisation */
+.config-header-with-reset {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.config-header-with-reset h2 {
+    margin: 0;
+}
+
+.btn-reset-all {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+}
+
+.btn-reset-all:hover {
+    background: linear-gradient(135deg, #ff5252 0%, #dc4a5a 100%);
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.5);
+    transform: translateY(-2px);
+}
+
+.btn-reset-all:active {
+    transform: translateY(0);
+}
+
+/* Section header avec bouton de réinitialisation individuel */
+.config-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.config-section-header label {
+    margin-bottom: 0 !important;
+}
+
+.btn-reset-param {
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    color: #ff9966;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0.7;
+}
+
+.btn-reset-param:hover {
+    background: rgba(255, 153, 102, 0.15);
+    border-color: #ff9966;
+    opacity: 1;
+    transform: rotate(180deg);
+}
+
+.btn-reset-param:active {
+    transform: rotate(180deg) scale(0.9);
+}
+
 /* Grid for grouped inputs */
 .config-grid {
     display: grid;

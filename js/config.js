@@ -325,12 +325,98 @@ function initConfigPanel() {
         updatePreview();
     }
     
+    // Fonction pour réinitialiser un paramètre spécifique à sa valeur par défaut
+    function resetParameter(paramName) {
+        const $ = (id) => document.getElementById(id);
+        
+        switch(paramName) {
+            case 'falling':
+                if ($('cfg-falling-enabled')) $('cfg-falling-enabled').checked = DEFAULT_CONFIG.effects.fallingParticles.enabled;
+                if ($('cfg-falling-count')) $('cfg-falling-count').value = DEFAULT_CONFIG.effects.fallingParticles.baseCount;
+                break;
+            case 'magnetic':
+                if ($('cfg-magnetic-enabled')) $('cfg-magnetic-enabled').checked = DEFAULT_CONFIG.effects.magneticParticles.enabled;
+                if ($('cfg-magnetic-max')) $('cfg-magnetic-max').value = DEFAULT_CONFIG.effects.magneticParticles.maxParticles;
+                if ($('cfg-magnetic-spawn')) $('cfg-magnetic-spawn').value = DEFAULT_CONFIG.effects.magneticParticles.spawnIntervalMs / 1000;
+                if ($('cfg-magnetic-radius')) $('cfg-magnetic-radius').value = DEFAULT_CONFIG.effects.magneticParticles.attractionRadius;
+                break;
+            case 'matrix':
+                if ($('cfg-matrix-enabled')) $('cfg-matrix-enabled').checked = DEFAULT_CONFIG.effects.matrix.enabled;
+                if ($('cfg-matrix-duration')) $('cfg-matrix-duration').value = DEFAULT_CONFIG.effects.matrix.durationMs / 1000;
+                break;
+            case 'critical':
+                if ($('cfg-critical-enabled')) $('cfg-critical-enabled').checked = DEFAULT_CONFIG.effects.critical.enabled;
+                if ($('cfg-critical-threshold')) $('cfg-critical-threshold').value = DEFAULT_CONFIG.effects.critical.thresholdPercent;
+                break;
+            case 'hype':
+                if ($('cfg-hype-enabled')) $('cfg-hype-enabled').checked = DEFAULT_CONFIG.effects.hype.enabled;
+                if ($('cfg-hype-particles')) $('cfg-hype-particles').value = DEFAULT_CONFIG.effects.hype.particlesDuringHype;
+                break;
+            case 'wheel':
+                if ($('cfg-wheel-result')) $('cfg-wheel-result').value = DEFAULT_CONFIG.effects.wheel.resultDisplayMs / 1000;
+                break;
+        }
+        
+        // Vérifie les changements après réinitialisation
+        checkForChanges();
+    }
+    
+    // Fonction pour réinitialiser tous les effets aux valeurs par défaut
+    function resetAllEffects() {
+        const $ = (id) => document.getElementById(id);
+        
+        if ($('cfg-falling-enabled')) $('cfg-falling-enabled').checked = DEFAULT_CONFIG.effects.fallingParticles.enabled;
+        if ($('cfg-falling-count')) $('cfg-falling-count').value = DEFAULT_CONFIG.effects.fallingParticles.baseCount;
+
+        if ($('cfg-magnetic-enabled')) $('cfg-magnetic-enabled').checked = DEFAULT_CONFIG.effects.magneticParticles.enabled;
+        if ($('cfg-magnetic-max')) $('cfg-magnetic-max').value = DEFAULT_CONFIG.effects.magneticParticles.maxParticles;
+        if ($('cfg-magnetic-spawn')) $('cfg-magnetic-spawn').value = DEFAULT_CONFIG.effects.magneticParticles.spawnIntervalMs / 1000;
+        if ($('cfg-magnetic-radius')) $('cfg-magnetic-radius').value = DEFAULT_CONFIG.effects.magneticParticles.attractionRadius;
+
+        if ($('cfg-matrix-enabled')) $('cfg-matrix-enabled').checked = DEFAULT_CONFIG.effects.matrix.enabled;
+        if ($('cfg-matrix-duration')) $('cfg-matrix-duration').value = DEFAULT_CONFIG.effects.matrix.durationMs / 1000;
+
+        if ($('cfg-critical-enabled')) $('cfg-critical-enabled').checked = DEFAULT_CONFIG.effects.critical.enabled;
+        if ($('cfg-critical-threshold')) $('cfg-critical-threshold').value = DEFAULT_CONFIG.effects.critical.thresholdPercent;
+
+        if ($('cfg-hype-enabled')) $('cfg-hype-enabled').checked = DEFAULT_CONFIG.effects.hype.enabled;
+        if ($('cfg-hype-particles')) $('cfg-hype-particles').value = DEFAULT_CONFIG.effects.hype.particlesDuringHype;
+
+        if ($('cfg-wheel-result')) $('cfg-wheel-result').value = DEFAULT_CONFIG.effects.wheel.resultDisplayMs / 1000;
+        
+        // Vérifie les changements après réinitialisation
+        checkForChanges();
+    }
+    
     // Ajoute des listeners sur tous les inputs pour détecter les changements
     const allInputs = configPanel.querySelectorAll('input, select, textarea');
     allInputs.forEach(input => {
         input.addEventListener('input', checkForChanges);
         input.addEventListener('change', checkForChanges);
     });
+    
+    // Boutons de réinitialisation individuels
+    const resetButtons = document.querySelectorAll('.btn-reset-param');
+    resetButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const paramName = btn.getAttribute('data-reset');
+            if (paramName) {
+                resetParameter(paramName);
+            }
+        });
+    });
+    
+    // Bouton de réinitialisation globale
+    const resetAllBtn = document.getElementById('reset-all-effects');
+    if (resetAllBtn) {
+        resetAllBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm('🔄 Voulez-vous vraiment réinitialiser tous les effets aux valeurs par défaut ?')) {
+                resetAllEffects();
+            }
+        });
+    }
     
     // Boutons de la barre de sauvegarde
     unsavedSaveBtn?.addEventListener('click', saveConfiguration);

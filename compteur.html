@@ -41,10 +41,16 @@
 
             <hr style="border-color: rgba(255,255,255,0.15); margin: 24px 0;">
 
-            <h2>🎛️ Effets</h2>
+            <div class="config-header-with-reset">
+                <h2>🎛️ Effets</h2>
+                <button id="reset-all-effects" class="btn-reset-all" title="Réinitialiser tous les effets">🔄 Tout réinitialiser</button>
+            </div>
 
             <div class="config-section">
-                <label><input type="checkbox" id="cfg-falling-enabled"> ✅ Emojis qui tombent</label>
+                <div class="config-section-header">
+                    <label><input type="checkbox" id="cfg-falling-enabled"> ✅ Emojis qui tombent</label>
+                    <button class="btn-reset-param" data-reset="falling" title="Réinitialiser ce paramètre">🔄</button>
+                </div>
                 <div class="config-grid">
                     <div>
                         <label for="cfg-falling-count">Nombre de particules</label>
@@ -54,7 +60,10 @@
             </div>
 
             <div class="config-section">
-                <label><input type="checkbox" id="cfg-magnetic-enabled"> 🧲 Particules magnétiques</label>
+                <div class="config-section-header">
+                    <label><input type="checkbox" id="cfg-magnetic-enabled"> 🧲 Particules magnétiques</label>
+                    <button class="btn-reset-param" data-reset="magnetic" title="Réinitialiser ce paramètre">🔄</button>
+                </div>
                 <div class="config-grid">
                     <div>
                         <label for="cfg-magnetic-max">Max particules</label>
@@ -72,7 +81,10 @@
             </div>
 
             <div class="config-section">
-                <label><input type="checkbox" id="cfg-matrix-enabled"> 🟢 Effet Matrix</label>
+                <div class="config-section-header">
+                    <label><input type="checkbox" id="cfg-matrix-enabled"> 🟢 Effet Matrix</label>
+                    <button class="btn-reset-param" data-reset="matrix" title="Réinitialiser ce paramètre">🔄</button>
+                </div>
                 <div class="config-grid">
                     <div>
                         <label for="cfg-matrix-duration">Durée (s)</label>
@@ -82,7 +94,10 @@
             </div>
 
             <div class="config-section">
-                <label><input type="checkbox" id="cfg-critical-enabled"> ⚠️ Mode critique</label>
+                <div class="config-section-header">
+                    <label><input type="checkbox" id="cfg-critical-enabled"> ⚠️ Mode critique</label>
+                    <button class="btn-reset-param" data-reset="critical" title="Réinitialiser ce paramètre">🔄</button>
+                </div>
                 <div class="config-grid">
                     <div>
                         <label for="cfg-critical-threshold">Seuil (%)</label>
@@ -92,7 +107,10 @@
             </div>
 
             <div class="config-section">
-                <label><input type="checkbox" id="cfg-hype-enabled"> 🔥 Hype Mode</label>
+                <div class="config-section-header">
+                    <label><input type="checkbox" id="cfg-hype-enabled"> 🔥 Hype Mode</label>
+                    <button class="btn-reset-param" data-reset="hype" title="Réinitialiser ce paramètre">🔄</button>
+                </div>
                 <div class="config-grid">
                     <div>
                         <label for="cfg-hype-particles">Particules en Hype</label>
@@ -102,7 +120,10 @@
             </div>
 
             <div class="config-section">
-                <label>🎡 Roue</label>
+                <div class="config-section-header">
+                    <label>🎡 Roue</label>
+                    <button class="btn-reset-param" data-reset="wheel" title="Réinitialiser ce paramètre">🔄</button>
+                </div>
                 <div class="config-grid">
                     <div>
                         <label for="cfg-wheel-result">Durée message résultat (s)</label>
