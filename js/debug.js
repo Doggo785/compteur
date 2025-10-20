@@ -11,6 +11,7 @@ let debugModeActive = false;
 const DEFAULT_DEBUG_CONFIG = {
     enabled: false,
     wheelEnabled: true,
+    criticalModeEnabled: false, // désactivé par défaut - à activer manuellement
     forcedEffect: null, // null | 'hype' | 'matrix' | 'none'
     timeMultiplier: 1, // multiplicateur de vitesse du temps
     showDebugInfo: false, // affiche les infos de debug sur l'écran
@@ -81,11 +82,25 @@ function createDebugPanel() {
             
             <div class="debug-section">
                 <h3>🎡 Contrôle de la Roue</h3>
-                <label class="debug-toggle">
-                    <input type="checkbox" id="debug-wheel-enabled" checked>
+                <label class="debug-switch-label">
                     <span>Roue activée</span>
+                    <label class="debug-switch">
+                        <input type="checkbox" id="debug-wheel-enabled" checked>
+                        <span class="debug-switch-slider"></span>
+                    </label>
                 </label>
                 <button id="debug-force-spin" class="debug-btn">🎲 Forcer un lancer</button>
+            </div>
+            
+            <div class="debug-section">
+                <h3>⚠️ Mode Critique</h3>
+                <label class="debug-switch-label">
+                    <span>Mode critique activé</span>
+                    <label class="debug-switch">
+                        <input type="checkbox" id="debug-critical-enabled">
+                        <span class="debug-switch-slider"></span>
+                    </label>
+                </label>
             </div>
             
             <div class="debug-section">
@@ -103,9 +118,12 @@ function createDebugPanel() {
             
             <div class="debug-section">
                 <h3>⏱️ Contrôle du Temps</h3>
-                <label class="debug-toggle">
-                    <input type="checkbox" id="debug-freeze-time">
+                <label class="debug-switch-label">
                     <span>❄️ Geler le temps</span>
+                    <label class="debug-switch">
+                        <input type="checkbox" id="debug-freeze-time">
+                        <span class="debug-switch-slider"></span>
+                    </label>
                 </label>
                 <div class="debug-slider-group">
                     <label for="debug-time-multiplier">Vitesse du temps: <span id="time-multiplier-value">1.0x</span></label>
@@ -124,17 +142,23 @@ function createDebugPanel() {
                     <label for="debug-particle-count">Nombre de particules: <span id="particle-count-value">25</span></label>
                     <input type="range" id="debug-particle-count" min="0" max="500" step="5" value="25" class="debug-slider">
                 </div>
-                <label class="debug-toggle">
-                    <input type="checkbox" id="debug-particle-info">
+                <label class="debug-switch-label">
                     <span>Afficher infos particules</span>
+                    <label class="debug-switch">
+                        <input type="checkbox" id="debug-particle-info">
+                        <span class="debug-switch-slider"></span>
+                    </label>
                 </label>
             </div>
             
             <div class="debug-section">
                 <h3>📊 Informations</h3>
-                <label class="debug-toggle">
-                    <input type="checkbox" id="debug-show-info">
+                <label class="debug-switch-label">
                     <span>Overlay d'informations</span>
+                    <label class="debug-switch">
+                        <input type="checkbox" id="debug-show-info">
+                        <span class="debug-switch-slider"></span>
+                    </label>
                 </label>
                 <button id="debug-log-state" class="debug-btn">📋 Logger l'état</button>
                 <button id="debug-reset-all" class="debug-btn debug-btn-danger">🔄 Reset complet</button>
@@ -178,6 +202,9 @@ function createDebugOverlay() {
         <div class="debug-info-item">
             <strong>Roue:</strong> <span id="debug-wheel-status">Activée</span>
         </div>
+        <div class="debug-info-item">
+            <strong>Critique:</strong> <span id="debug-critical-status">-</span>
+        </div>
     `;
     
     document.body.appendChild(overlay);
@@ -200,6 +227,24 @@ function initDebugControls(config) {
             debugConfig.wheelEnabled = e.target.checked;
             saveDebugConfig(debugConfig);
             applyWheelDebug(debugConfig.wheelEnabled);
+        });
+    }
+    
+    // Contrôle du mode critique
+    const criticalEnabledCheckbox = document.getElementById('debug-critical-enabled');
+    if (criticalEnabledCheckbox) {
+        criticalEnabledCheckbox.checked = config.criticalModeEnabled === true;
+        criticalEnabledCheckbox.addEventListener('change', (e) => {
+            const debugConfig = loadDebugConfig();
+            debugConfig.criticalModeEnabled = e.target.checked;
+            saveDebugConfig(debugConfig);
+            applyCriticalModeDebug(debugConfig.criticalModeEnabled);
+            console.log(`🐛 Mode critique ${e.target.checked ? 'activé' : 'désactivé'} via debug`);
+            
+            // ✅ FORCE une vérification IMMÉDIATE du mode critique
+            if (typeof checkCriticalMode === 'function') {
+                checkCriticalMode();
+            }
         });
     }
     
@@ -387,6 +432,24 @@ function applyWheelDebug(enabled) {
     updateDebugInfo('wheel-status', enabled ? 'Activée' : 'Désactivée');
 }
 
+// Applique le debug du mode critique
+function applyCriticalModeDebug(enabled) {
+    console.log(`Mode critique ${enabled ? 'activé' : 'désactivé'} par le debug`);
+    // La fonction checkCriticalMode dans advancedEffects.js vérifiera cette valeur
+}
+
+// Vérifie si le mode critique est activé (fonction appelée depuis advancedEffects.js)
+function isCriticalModeEnabled() {
+    const config = loadDebugConfig();
+    // Si le debug est actif, vérifier son paramètre
+    if (config.enabled) {
+        // Retourne true seulement si explicitement activé
+        return config.criticalModeEnabled === true;
+    }
+    // Si le debug n'est pas actif, retourne true (comportement normal - la config principale décide)
+    return true;
+}
+
 // Met à jour l'overlay de debug
 function updateDebugOverlay() {
     const overlay = document.getElementById('debug-overlay');
@@ -463,6 +526,19 @@ function updateDebugDisplay() {
         activeEffect = '💚 Matrix';
     }
     updateDebugInfo('active-effect', activeEffect);
+
+    // Mise à jour du statut Mode Critique (source + statut actif visuel)
+    try {
+        const mainCfgEnabled = (typeof getConfigPath === 'function') ? !!getConfigPath('effects.critical.enabled', true) : true;
+        const debugActive = !!(window.debugMode && typeof window.debugMode.isActive === 'function' && window.debugMode.isActive());
+        const debugCfg = loadDebugConfig();
+        const effectiveToggle = debugActive ? (debugCfg.criticalModeEnabled === true) : mainCfgEnabled;
+        const source = debugActive ? 'Debug' : 'Config';
+        const container = document.querySelector('.container');
+        const visuallyActive = !!(container && container.classList.contains('critical-mode'));
+        const label = `${effectiveToggle ? 'ON' : 'OFF'} (${source})${visuallyActive ? ' [ACTIVE]' : ''}`;
+        updateDebugInfo('critical-status', label);
+    } catch {}
 }
 
 // Intercepte le pourcentage pour le mode Debug
@@ -592,5 +668,6 @@ window.debugMode = {
     updateDisplay: updateDebugDisplay,
     getAdjustedPercentage: getDebugAdjustedPercentage,
     getAdjustedTime: getDebugAdjustedTime,
-    applyEffectOverride: applyDebugEffectOverride
+    applyEffectOverride: applyDebugEffectOverride,
+    isCriticalModeEnabled: isCriticalModeEnabled
 };

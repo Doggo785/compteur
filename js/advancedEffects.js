@@ -384,7 +384,17 @@ function checkCriticalMode() {
     const remaining = dateCible - now;
     const percentageRemaining = (remaining / totalDuration) * 100;
 
-    const criticalEnabled = (typeof getConfigPath === 'function') ? !!getConfigPath('effects.critical.enabled', true) : true;
+    // ✅ NOUVELLE LOGIQUE : Le DEBUG a la PRIORITÉ ABSOLUE sur TOUT
+    const debugActive = !!(window.debugMode && typeof window.debugMode.isActive === 'function' && window.debugMode.isActive());
+    const debugCriticalOn = (typeof isCriticalModeEnabled === 'function') ? !!isCriticalModeEnabled() : true;
+
+    // État activé/désactivé global
+    // - Si DEBUG actif: c'est le slider DEBUG qui décide
+    // - Sinon: c'est la config principale (et on laisse isCriticalModeEnabled comme garde-fou neutre)
+    let criticalEnabled = debugActive
+        ? debugCriticalOn
+        : ((typeof getConfigPath === 'function') ? !!getConfigPath('effects.critical.enabled', true) : true) && debugCriticalOn;
+    
     const criticalThreshold = (typeof getConfigPath === 'function') ? (getConfigPath('effects.critical.thresholdPercent', 10) || 10) : 10;
     const h1Element = document.querySelector('h1');
     const timerElement = document.getElementById('countdown-timer');
@@ -392,7 +402,9 @@ function checkCriticalMode() {
     const progressBars = document.querySelectorAll('.progress-bar');
 
     // Mode critique activé
-    if (criticalEnabled && percentageRemaining < criticalThreshold && percentageRemaining > 0) {
+    // Si DEBUG est actif et slider ON -> on FORCE l'activation (ignore le seuil)
+    const shouldActivate = criticalEnabled && (debugActive ? true : (percentageRemaining < criticalThreshold && percentageRemaining > 0));
+    if (shouldActivate) {
         if (!isInCriticalMode) {
             isInCriticalMode = true;
             console.log('⚠️ MODE CRITIQUE ACTIVÉ !');
@@ -424,10 +436,11 @@ function checkCriticalMode() {
             // Trigger Matrix effect immédiatement en mode critique
             triggerMatrixTransition(1500);
         }
-    } else if (isInCriticalMode && percentageRemaining >= criticalThreshold) {
-        // Désactiver le mode critique
+    } else if (isInCriticalMode && (!criticalEnabled || (!debugActive && percentageRemaining >= criticalThreshold))) {
+        // ✅ Désactiver le mode critique (si désactivé manuellement OU si seuil dépassé)
         isInCriticalMode = false;
-        console.log('✅ Mode critique désactivé');
+        const reason = !criticalEnabled ? ' (désactivé manuellement)' : '';
+        console.log('✅ Mode critique désactivé' + reason);
         
         if (h1Element) {
             removeGlitchEffect(h1Element);
