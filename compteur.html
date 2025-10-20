@@ -16,6 +16,7 @@
     <!-- Panneau de configuration -->
     <div id="config-panel" class="config-panel">
         <div class="config-content">
+            <button id="close-config-btn" class="config-close-btn" title="Fermer">✕</button>
             <h2>⚙️ Configuration des Dates</h2>
             
             <div class="config-section">
@@ -30,12 +31,6 @@
             
             <div class="config-info">
                 <p>ℹ️ Les dates seront sauvegardées automatiquement</p>
-            </div>
-            
-            <div class="config-actions">
-                <button id="save-config-btn" class="btn btn-primary">💾 Sauvegarder</button>
-                <button id="reset-config-btn" class="btn btn-secondary">🔄 Réinitialiser</button>
-                <button id="close-config-btn" class="btn btn-tertiary">❌ Fermer</button>
             </div>
             
             <div class="config-preview">
@@ -116,6 +111,15 @@
                 </div>
             </div>
 
+        </div>
+        
+        <!-- Barre d'avertissement de modifications non sauvegardées -->
+        <div id="unsaved-bar" class="unsaved-bar" aria-live="polite" aria-atomic="true">
+            <div class="unsaved-bar-text">Des modifications non sauvegardées</div>
+            <div class="unsaved-bar-actions">
+                <button id="unsaved-reset" class="btn btn-secondary">↩️ Réinitialiser</button>
+                <button id="unsaved-save" class="btn btn-primary">💾 Sauvegarder</button>
+            </div>
         </div>
     </div>
 

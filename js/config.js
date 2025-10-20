@@ -122,15 +122,30 @@ function initConfigPanel() {
     const configBtn = document.getElementById('config-btn');
     const configPanel = document.getElementById('config-panel');
     const closeBtn = document.getElementById('close-config-btn');
-    const saveBtn = document.getElementById('save-config-btn');
-    const resetBtn = document.getElementById('reset-config-btn');
+    const unsavedBar = document.getElementById('unsaved-bar');
+    const unsavedSaveBtn = document.getElementById('unsaved-save');
+    const unsavedResetBtn = document.getElementById('unsaved-reset');
     const dateDebutInput = document.getElementById('date-debut');
     const dateCibleInput = document.getElementById('date-cible');
     
+    console.log('Init config panel - Elements found:', {
+        configBtn: !!configBtn,
+        configPanel: !!configPanel,
+        closeBtn: !!closeBtn,
+        unsavedBar: !!unsavedBar,
+        unsavedSaveBtn: !!unsavedSaveBtn,
+        unsavedResetBtn: !!unsavedResetBtn
+    });
+    
     if (!configBtn || !configPanel) return;
+    
+    // État de la configuration
+    let savedConfig = null;
+    let hasUnsavedChanges = false;
     
     // Charge la configuration actuelle
     const currentConfig = loadConfig();
+    savedConfig = JSON.parse(JSON.stringify(currentConfig)); // Clone profond
     dateDebutInput.value = formatDateForInput(currentConfig.dateDebut);
     dateCibleInput.value = formatDateForInput(currentConfig.dateCible);
 
@@ -179,33 +194,11 @@ function initConfigPanel() {
 
     updatePreview();
     
-    // Ouvre le panneau
-    configBtn.addEventListener('click', () => {
-        configPanel.classList.add('visible');
-        updatePreview();
-    });
-    
-    // Ferme le panneau
-    closeBtn.addEventListener('click', () => {
-        configPanel.classList.remove('visible');
-    });
-    
-    // Ferme le panneau en cliquant en dehors
-    configPanel.addEventListener('click', (e) => {
-        if (e.target === configPanel) {
-            configPanel.classList.remove('visible');
-        }
-    });
-    
-    // Sauvegarde les modifications
-    saveBtn.addEventListener('click', () => {
-        const $ = (id) => {
-            const el = document.getElementById(id);
-            if (!el) console.error('Element not found during save:', id);
-            return el;
-        };
+    // Fonction pour récupérer la config actuelle depuis les inputs
+    function getCurrentFormConfig() {
+        const $ = (id) => document.getElementById(id);
         
-        const newConfig = {
+        return {
             dateDebut: dateDebutInput.value,
             dateCible: dateCibleInput.value,
             effects: {
@@ -216,7 +209,7 @@ function initConfigPanel() {
                 magneticParticles: {
                     enabled: $('cfg-magnetic-enabled')?.checked ?? true,
                     maxParticles: parseInt($('cfg-magnetic-max')?.value, 10) || 200,
-                    spawnIntervalMs: parseFloat($('cfg-magnetic-spawn')?.value) * 1000 || 50000,
+                    spawnIntervalMs: parseFloat($('cfg-magnetic-spawn')?.value) * 1000 || 50,
                     attractionRadius: parseInt($('cfg-magnetic-radius')?.value, 10) || 150,
                 },
                 matrix: {
@@ -236,8 +229,29 @@ function initConfigPanel() {
                 }
             }
         };
+    }
+    
+    // Fonction pour vérifier si la config a changé
+    function checkForChanges() {
+        const currentFormConfig = getCurrentFormConfig();
+        const changed = JSON.stringify(currentFormConfig) !== JSON.stringify(savedConfig);
         
-        console.log('Saving configuration:', newConfig);
+        console.log('Checking for changes:', changed);
+        
+        if (changed && !hasUnsavedChanges) {
+            hasUnsavedChanges = true;
+            console.log('Showing unsaved bar');
+            unsavedBar?.classList.add('visible');
+        } else if (!changed && hasUnsavedChanges) {
+            hasUnsavedChanges = false;
+            console.log('Hiding unsaved bar');
+            unsavedBar?.classList.remove('visible');
+        }
+    }
+    
+    // Fonction pour sauvegarder la config
+    function saveConfiguration() {
+        const newConfig = getCurrentFormConfig();
         
         // Validation
         const debut = new Date(newConfig.dateDebut);
@@ -245,62 +259,119 @@ function initConfigPanel() {
         
         if (cible <= debut) {
             alert('⚠️ La date cible doit être postérieure à la date de début !');
-            return;
+            return false;
         }
         
         // Sauvegarde
         if (saveConfig(newConfig)) {
-            // Effet visuel de confirmation
-            saveBtn.textContent = '✅ Sauvegardé !';
-            saveBtn.style.backgroundColor = '#00ff88';
+            savedConfig = JSON.parse(JSON.stringify(newConfig));
+            hasUnsavedChanges = false;
+            unsavedBar?.classList.remove('visible');
             
-            setTimeout(() => {
-                saveBtn.textContent = '💾 Sauvegarder';
-                saveBtn.style.backgroundColor = '';
-            }, 2000);
+            // Effet visuel de confirmation
+            const btn = unsavedSaveBtn;
+            if (btn) {
+                const originalText = btn.textContent;
+                const originalBg = btn.style.background;
+                btn.textContent = '✅ Sauvegardé !';
+                btn.style.background = 'linear-gradient(135deg, #00ff88 0%, #00cc6a 100%)';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = originalBg;
+                }, 2000);
+            }
             
             // Recharge la page pour appliquer les nouvelles dates
             setTimeout(() => {
                 location.reload();
             }, 1000);
+            
+            return true;
         } else {
             alert('❌ Erreur lors de la sauvegarde. Veuillez réessayer.');
+            return false;
+        }
+    }
+    
+    // Fonction pour réinitialiser aux valeurs sauvegardées
+    function resetToSaved() {
+        dateDebutInput.value = formatDateForInput(savedConfig.dateDebut);
+        dateCibleInput.value = formatDateForInput(savedConfig.dateCible);
+
+        const $ = (id) => document.getElementById(id);
+        
+        if ($('cfg-falling-enabled')) $('cfg-falling-enabled').checked = savedConfig.effects.fallingParticles.enabled;
+        if ($('cfg-falling-count')) $('cfg-falling-count').value = savedConfig.effects.fallingParticles.baseCount;
+
+        if ($('cfg-magnetic-enabled')) $('cfg-magnetic-enabled').checked = savedConfig.effects.magneticParticles.enabled;
+        if ($('cfg-magnetic-max')) $('cfg-magnetic-max').value = savedConfig.effects.magneticParticles.maxParticles;
+        if ($('cfg-magnetic-spawn')) $('cfg-magnetic-spawn').value = savedConfig.effects.magneticParticles.spawnIntervalMs / 1000;
+        if ($('cfg-magnetic-radius')) $('cfg-magnetic-radius').value = savedConfig.effects.magneticParticles.attractionRadius;
+
+        if ($('cfg-matrix-enabled')) $('cfg-matrix-enabled').checked = savedConfig.effects.matrix.enabled;
+        if ($('cfg-matrix-duration')) $('cfg-matrix-duration').value = savedConfig.effects.matrix.durationMs / 1000;
+
+        if ($('cfg-critical-enabled')) $('cfg-critical-enabled').checked = savedConfig.effects.critical.enabled;
+        if ($('cfg-critical-threshold')) $('cfg-critical-threshold').value = savedConfig.effects.critical.thresholdPercent;
+
+        if ($('cfg-hype-enabled')) $('cfg-hype-enabled').checked = savedConfig.effects.hype.enabled;
+        if ($('cfg-hype-particles')) $('cfg-hype-particles').value = savedConfig.effects.hype.particlesDuringHype;
+
+        if ($('cfg-wheel-result')) $('cfg-wheel-result').value = savedConfig.effects.wheel.resultDisplayMs / 1000;
+
+        hasUnsavedChanges = false;
+        unsavedBar?.classList.remove('visible');
+        updatePreview();
+    }
+    
+    // Ajoute des listeners sur tous les inputs pour détecter les changements
+    const allInputs = configPanel.querySelectorAll('input, select, textarea');
+    allInputs.forEach(input => {
+        input.addEventListener('input', checkForChanges);
+        input.addEventListener('change', checkForChanges);
+    });
+    
+    // Boutons de la barre de sauvegarde
+    unsavedSaveBtn?.addEventListener('click', saveConfiguration);
+    unsavedResetBtn?.addEventListener('click', resetToSaved);
+    
+    // Ouvre le panneau
+    configBtn.addEventListener('click', () => {
+        configPanel.classList.add('visible');
+        updatePreview();
+        // Réinitialise l'état des changements quand on ouvre
+        checkForChanges();
+    });
+    
+    // Fonction pour fermer le panneau avec vérification
+    function closePanel() {
+        if (hasUnsavedChanges) {
+            // Clignote en rouge pour alerter
+            unsavedBar?.classList.add('warning');
+            setTimeout(() => {
+                unsavedBar?.classList.remove('warning');
+            }, 1800); // 3 clignotements × 0.6s
+            return false;
+        }
+        configPanel.classList.remove('visible');
+        return true;
+    }
+    
+    // Bouton de fermeture
+    closeBtn?.addEventListener('click', closePanel);
+    
+    // Ferme le panneau en cliquant en dehors
+    configPanel.addEventListener('click', (e) => {
+        if (e.target === configPanel) {
+            closePanel();
         }
     });
     
-    // Réinitialise aux valeurs par défaut
-    resetBtn.addEventListener('click', () => {
-        if (confirm('🔄 Êtes-vous sûr de vouloir réinitialiser aux valeurs par défaut ?')) {
-            const cfg = DEFAULT_CONFIG;
-            dateDebutInput.value = formatDateForInput(cfg.dateDebut);
-            dateCibleInput.value = formatDateForInput(cfg.dateCible);
-
-            const $ = (id) => {
-                const el = document.getElementById(id);
-                if (!el) console.warn('Element not found during reset:', id);
-                return el;
-            };
-            
-            if ($('cfg-falling-enabled')) $('cfg-falling-enabled').checked = cfg.effects.fallingParticles.enabled;
-            if ($('cfg-falling-count')) $('cfg-falling-count').value = cfg.effects.fallingParticles.baseCount;
-
-            if ($('cfg-magnetic-enabled')) $('cfg-magnetic-enabled').checked = cfg.effects.magneticParticles.enabled;
-            if ($('cfg-magnetic-max')) $('cfg-magnetic-max').value = cfg.effects.magneticParticles.maxParticles;
-            if ($('cfg-magnetic-spawn')) $('cfg-magnetic-spawn').value = cfg.effects.magneticParticles.spawnIntervalMs / 1000;
-            if ($('cfg-magnetic-radius')) $('cfg-magnetic-radius').value = cfg.effects.magneticParticles.attractionRadius;
-
-            if ($('cfg-matrix-enabled')) $('cfg-matrix-enabled').checked = cfg.effects.matrix.enabled;
-            if ($('cfg-matrix-duration')) $('cfg-matrix-duration').value = cfg.effects.matrix.durationMs / 1000;
-
-            if ($('cfg-critical-enabled')) $('cfg-critical-enabled').checked = cfg.effects.critical.enabled;
-            if ($('cfg-critical-threshold')) $('cfg-critical-threshold').value = cfg.effects.critical.thresholdPercent;
-
-            if ($('cfg-hype-enabled')) $('cfg-hype-enabled').checked = cfg.effects.hype.enabled;
-            if ($('cfg-hype-particles')) $('cfg-hype-particles').value = cfg.effects.hype.particlesDuringHype;
-
-            if ($('cfg-wheel-result')) $('cfg-wheel-result').value = cfg.effects.wheel.resultDisplayMs / 1000;
-
-            updatePreview();
+    // Raccourci clavier ESC pour fermer
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && configPanel.classList.contains('visible')) {
+            closePanel();
         }
     });
     
@@ -309,14 +380,8 @@ function initConfigPanel() {
     dateCibleInput.addEventListener('change', updatePreview);
     dateDebutInput.addEventListener('input', updatePreview);
     dateCibleInput.addEventListener('input', updatePreview);
-    
-    // Raccourci clavier ESC pour fermer
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && configPanel.classList.contains('visible')) {
-            configPanel.classList.remove('visible');
-        }
-    });
 }
+
 
 // Helpers pour lire/mettre à jour des chemins spécifiques
 function getConfigPath(path, fallback) {

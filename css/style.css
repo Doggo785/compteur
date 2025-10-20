@@ -505,6 +505,33 @@ h1 {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
     border: 2px solid rgba(255, 255, 255, 0.1);
     animation: slideIn 0.3s ease;
+    position: relative;
+}
+
+/* Bouton de fermeture du panneau */
+.config-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.config-close-btn:hover {
+    background: rgba(255, 0, 0, 0.3);
+    border-color: rgba(255, 0, 0, 0.5);
+    transform: rotate(90deg);
 }
 
 /* Scrollbar styling for config panel */
@@ -905,5 +932,136 @@ h1 {
     }
     50% {
         opacity: 0.7;
+    }
+}
+
+/* ============================================ */
+/* BARRE DE MODIFICATIONS NON SAUVEGARDÉES */
+/* ============================================ */
+
+
+.unsaved-bar {
+    position: fixed;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%) translateY(calc(100% + 56px));
+    background: linear-gradient(135deg, #23243a 0%, #3a3b5a 100%);
+    color: white;
+    padding: 10px 28px;
+    border-radius: 18px;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    z-index: 400;
+    min-width: 320px;
+    max-width: 90vw;
+    border: 2px solid transparent;
+    font-family: 'Roboto', sans-serif;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55), box-shadow 0.3s, border-color 0.3s, opacity 0.2s ease;
+}
+
+.unsaved-bar.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+}
+
+
+.unsaved-bar.warning {
+    animation: unsaved-bar-shake 0.22s cubic-bezier(.36,.07,.19,.97) 1;
+    border-color: #ff2d2d;
+    box-shadow: 0 8px 32px rgba(255,0,0,0.25), 0 0 0 4px #ff2d2d44;
+}
+
+@keyframes unsaved-bar-shake {
+    0% { transform: translateX(-50%) scale(1) translateY(0) translateX(0); }
+    20% { transform: translateX(-50%) scale(1) translateY(0) translateX(-8px); }
+    40% { transform: translateX(-50%) scale(1) translateY(0) translateX(8px); }
+    60% { transform: translateX(-50%) scale(1) translateY(0) translateX(-8px); }
+    80% { transform: translateX(-50%) scale(1) translateY(0) translateX(8px); }
+    100% { transform: translateX(-50%) scale(1) translateY(0) translateX(0); }
+}
+
+
+
+.unsaved-bar-text {
+    flex: 1;
+    font-size: 0.92em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.02em;
+}
+
+
+.unsaved-bar-text::before {
+    content: '⚠️';
+    font-size: 1.1em;
+}
+
+.unsaved-bar-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.unsaved-bar .btn {
+    padding: 7px 16px;
+    font-size: 0.88em;
+    min-width: auto;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+.unsaved-bar .btn:hover {
+    transform: translateY(-1px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+}
+
+.unsaved-bar .btn-secondary {
+    background: rgba(255, 255, 255, 0.13);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.unsaved-bar .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.22);
+}
+
+.unsaved-bar .btn-primary {
+    background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+    color: #1e1e1e;
+    font-weight: 600;
+    border: none;
+}
+
+.unsaved-bar .btn-primary:hover {
+    background: linear-gradient(135deg, #00ffaa 0%, #00dd7a 100%);
+}
+
+/* Responsive pour petits écrans */
+@media (max-width: 600px) {
+    .unsaved-bar {
+        min-width: 90vw;
+        flex-direction: column;
+        padding: 10px 8px;
+        gap: 8px;
+        bottom: 16px;
+    }
+    .unsaved-bar-text {
+        text-align: center;
+        font-size: 0.82em;
+    }
+    .unsaved-bar-actions {
+        width: 100%;
+        justify-content: center;
+    }
+    .unsaved-bar .btn {
+        flex: 1;
     }
 }
