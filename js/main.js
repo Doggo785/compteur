@@ -40,8 +40,9 @@ const domElements = {
 
 let particles = []; // Déclare un tableau global pour les particules
 
+// Initialise lastMinute à la valeur courante pour éviter un lancement immédiat au rafraîchissement
 let lastSecond = -1;
-let lastMinute = -1;
+let lastMinute = new Date().getMinutes();
 
 function updateMainProgressBar(maintenant) {
     const ecouleMillisecondes = maintenant - dateDebut;
