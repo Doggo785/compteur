@@ -98,6 +98,15 @@ function revealResultFromSegment(segmentEl) {
 }
 
 function spinWheel() {
+    // Vérifie si la roue est désactivée en mode Debug
+    if (window.debugMode && typeof window.debugMode.getConfig === 'function') {
+        const debugConfig = window.debugMode.getConfig();
+        if (debugConfig.enabled && !debugConfig.wheelEnabled) {
+            console.log('🐛 Debug: Roue désactivée');
+            return;
+        }
+    }
+    
     if (isSpinning) return;
     isSpinning = true;
 
@@ -117,7 +126,33 @@ function spinWheel() {
     const onEnd = () => {
         // Détection fiable via hit-testing
         const segmentEl = getSegmentUnderPointer();
-        revealResultFromSegment(segmentEl);
+        
+        // Applique l'override du mode Debug si configuré
+        let forcedEffect = null;
+        if (window.debugMode && typeof window.debugMode.getConfig === 'function') {
+            const debugConfig = window.debugMode.getConfig();
+            if (debugConfig.enabled && debugConfig.forcedEffect) {
+                forcedEffect = debugConfig.forcedEffect;
+                console.log('🐛 Debug: Effet forcé ->', forcedEffect);
+            }
+        }
+        
+        if (forcedEffect) {
+            // Force l'effet selon la config debug
+            if (forcedEffect === 'hype' && typeof startHypeMode === 'function') {
+                startHypeMode();
+            } else if (forcedEffect === 'matrix') {
+                if (typeof triggerMatrixTransition === 'function') {
+                    triggerMatrixTransition(25000);
+                } else if (window.advancedEffects && typeof window.advancedEffects.triggerMatrixTransition === 'function') {
+                    window.advancedEffects.triggerMatrixTransition(25000);
+                }
+            }
+            // 'none' = aucun effet déclenché
+        } else {
+            // Comportement normal
+            revealResultFromSegment(segmentEl);
+        }
 
         // Cache l'overlay et reset la rotation pour le prochain tour
         setTimeout(() => {
@@ -134,3 +169,4 @@ function spinWheel() {
 
     domElements.wheel.addEventListener('transitionend', onEnd, { once: true });
 }
+

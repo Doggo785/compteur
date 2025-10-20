@@ -1,3 +1,10 @@
+// Permet d'arrêter l'effet Matrix depuis l'extérieur
+function stopMatrixTransition() {
+    if (matrixEffect && matrixEffect.isActive) {
+        matrixEffect.stop();
+        console.log('🛑 Effet Matrix arrêté');
+    }
+}
 // ============================================
 // ANIMATIONS SUPPLÉMENTAIRES AVANCÉES
 // ============================================
@@ -468,6 +475,7 @@ window.advancedEffects = {
     initMagneticParticles,
     initMatrixEffect,
     triggerMatrixTransition,
+    stopMatrixTransition,
     applyGlitchEffect,
     removeGlitchEffect,
     // Fonction de test pour forcer le mode critique

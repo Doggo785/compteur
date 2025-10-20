@@ -218,6 +218,15 @@
     <script src="js/wheel.js"></script>
     <script src="js/hypeMode.js"></script>
     <script src="js/advancedEffects.js"></script>
+    <script src="js/debug.js"></script>
+    <script>
+        // Initialise le mode Debug après le chargement de tous les scripts
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof initDebugMode === 'function') {
+                initDebugMode();
+            }
+        });
+    </script>
 
 </body>
 

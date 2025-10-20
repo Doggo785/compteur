@@ -49,8 +49,21 @@ function updateMainProgressBar(maintenant) {
     let pourcentageTotal = (ecouleMillisecondes / totalMillisecondesIntervalle) * 100;
     pourcentageTotal = Math.max(0, Math.min(100, pourcentageTotal));
 
+    // Applique l'ajustement du mode Debug si disponible
+    if (window.debugMode && typeof window.debugMode.getAdjustedPercentage === 'function') {
+        pourcentageTotal = window.debugMode.getAdjustedPercentage(pourcentageTotal);
+    }
+
     domElements.mainProgressBar.style.width = pourcentageTotal + '%';
     domElements.mainProgressPercentage.textContent = pourcentageTotal.toFixed(3) + '%';
+    
+    // Met à jour l'overlay de debug
+    if (window.debugMode && typeof window.debugMode.updateDisplay === 'function') {
+        const debugOverlay = document.getElementById('debug-progress-display');
+        if (debugOverlay) {
+            debugOverlay.textContent = pourcentageTotal.toFixed(2) + '%';
+        }
+    }
 }
 
 function updateCountdownTimer(maintenant) {
@@ -99,11 +112,22 @@ function updateIndividualTimeBars(maintenant) {
 }
 
 function miseAJourBarres() {
-    const maintenant = new Date();
+    // Utilise le temps ajusté du mode Debug si disponible
+    let maintenant;
+    if (window.debugMode && typeof window.debugMode.getAdjustedTime === 'function') {
+        maintenant = window.debugMode.getAdjustedTime();
+    } else {
+        maintenant = new Date();
+    }
     
     updateMainProgressBar(maintenant);
     updateCountdownTimer(maintenant);
     updateIndividualTimeBars(maintenant);
+
+    // Met à jour l'affichage du mode Debug si actif
+    if (window.debugMode && typeof window.debugMode.updateDisplay === 'function') {
+        window.debugMode.updateDisplay();
+    }
 
     requestAnimationFrame(miseAJourBarres);
 }

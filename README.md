@@ -68,6 +68,23 @@ Pour tester le mode critique sans attendre, ouvrez la console du navigateur et t
 advancedEffects.testCriticalMode()
 ```
 
+## 🐛 Mode Debug
+
+Un mode Debug complet est disponible pour tester et contrôler tous les aspects de l'application.
+
+### Activation
+- **Hoverball** : Survolez le bord droit de l'écran (au milieu) pour révéler le bouton 🐛
+- **Raccourci** : `Ctrl + Shift + D`
+
+### Fonctionnalités principales
+- **Contrôle de la roue** : Activer/désactiver, forcer un lancer
+- **Effets forcés** : Forcer HYPE, Matrix ou aucun effet
+- **Contrôle du temps** : Geler, accélérer (jusqu'à 10x), ralentir
+- **Pourcentage forcé** : Tester l'interface à n'importe quel pourcentage
+- **Contrôle des particules** : Ajuster de 0 à 500 particules
+- **Overlay d'informations** : FPS, particules, progression en temps réel
+- **Logger l'état** : Exporter toutes les données dans la console
+
 ## Pré-requis
 
 - Un navigateur moderne prenant en charge les fonctionnalités CSS3 et JavaScript ES6.
