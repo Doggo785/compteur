@@ -153,13 +153,13 @@ function initConfigPanel() {
         const magneticRadius = $('cfg-magnetic-radius');
         if (magnetic) magnetic.checked = currentConfig.effects.magneticParticles?.enabled ?? true;
         if (magneticMax) magneticMax.value = currentConfig.effects.magneticParticles?.maxParticles ?? 200;
-        if (magneticSpawn) magneticSpawn.value = currentConfig.effects.magneticParticles?.spawnIntervalMs ?? 50;
+        if (magneticSpawn) magneticSpawn.value = (currentConfig.effects.magneticParticles?.spawnIntervalMs ?? 50) / 1000;
         if (magneticRadius) magneticRadius.value = currentConfig.effects.magneticParticles?.attractionRadius ?? 150;
 
         const matrix = $('cfg-matrix-enabled');
         const matrixDuration = $('cfg-matrix-duration');
         if (matrix) matrix.checked = currentConfig.effects.matrix?.enabled ?? true;
-        if (matrixDuration) matrixDuration.value = currentConfig.effects.matrix?.durationMs ?? 25000;
+        if (matrixDuration) matrixDuration.value = (currentConfig.effects.matrix?.durationMs ?? 25000) / 1000;
 
         const critical = $('cfg-critical-enabled');
         const criticalThreshold = $('cfg-critical-threshold');
@@ -172,7 +172,7 @@ function initConfigPanel() {
         if (hypeParticles) hypeParticles.value = currentConfig.effects.hype?.particlesDuringHype ?? 250;
 
         const wheelResult = $('cfg-wheel-result');
-        if (wheelResult) wheelResult.value = currentConfig.effects.wheel?.resultDisplayMs ?? 2000;
+        if (wheelResult) wheelResult.value = (currentConfig.effects.wheel?.resultDisplayMs ?? 2000) / 1000;
     } else {
         console.warn('No effects configuration found, using defaults');
     }
@@ -216,12 +216,12 @@ function initConfigPanel() {
                 magneticParticles: {
                     enabled: $('cfg-magnetic-enabled')?.checked ?? true,
                     maxParticles: parseInt($('cfg-magnetic-max')?.value, 10) || 200,
-                    spawnIntervalMs: parseInt($('cfg-magnetic-spawn')?.value, 10) || 50,
+                    spawnIntervalMs: parseFloat($('cfg-magnetic-spawn')?.value) * 1000 || 50000,
                     attractionRadius: parseInt($('cfg-magnetic-radius')?.value, 10) || 150,
                 },
                 matrix: {
                     enabled: $('cfg-matrix-enabled')?.checked ?? true,
-                    durationMs: parseInt($('cfg-matrix-duration')?.value, 10) || 25000,
+                    durationMs: parseFloat($('cfg-matrix-duration')?.value) * 1000 || 25000,
                 },
                 critical: {
                     enabled: $('cfg-critical-enabled')?.checked ?? true,
@@ -232,7 +232,7 @@ function initConfigPanel() {
                     particlesDuringHype: parseInt($('cfg-hype-particles')?.value, 10) || 250,
                 },
                 wheel: {
-                    resultDisplayMs: parseInt($('cfg-wheel-result')?.value, 10) || 2000,
+                    resultDisplayMs: parseFloat($('cfg-wheel-result')?.value) * 1000 || 2000,
                 }
             }
         };
@@ -286,11 +286,11 @@ function initConfigPanel() {
 
             if ($('cfg-magnetic-enabled')) $('cfg-magnetic-enabled').checked = cfg.effects.magneticParticles.enabled;
             if ($('cfg-magnetic-max')) $('cfg-magnetic-max').value = cfg.effects.magneticParticles.maxParticles;
-            if ($('cfg-magnetic-spawn')) $('cfg-magnetic-spawn').value = cfg.effects.magneticParticles.spawnIntervalMs;
+            if ($('cfg-magnetic-spawn')) $('cfg-magnetic-spawn').value = cfg.effects.magneticParticles.spawnIntervalMs / 1000;
             if ($('cfg-magnetic-radius')) $('cfg-magnetic-radius').value = cfg.effects.magneticParticles.attractionRadius;
 
             if ($('cfg-matrix-enabled')) $('cfg-matrix-enabled').checked = cfg.effects.matrix.enabled;
-            if ($('cfg-matrix-duration')) $('cfg-matrix-duration').value = cfg.effects.matrix.durationMs;
+            if ($('cfg-matrix-duration')) $('cfg-matrix-duration').value = cfg.effects.matrix.durationMs / 1000;
 
             if ($('cfg-critical-enabled')) $('cfg-critical-enabled').checked = cfg.effects.critical.enabled;
             if ($('cfg-critical-threshold')) $('cfg-critical-threshold').value = cfg.effects.critical.thresholdPercent;
@@ -298,7 +298,7 @@ function initConfigPanel() {
             if ($('cfg-hype-enabled')) $('cfg-hype-enabled').checked = cfg.effects.hype.enabled;
             if ($('cfg-hype-particles')) $('cfg-hype-particles').value = cfg.effects.hype.particlesDuringHype;
 
-            if ($('cfg-wheel-result')) $('cfg-wheel-result').value = cfg.effects.wheel.resultDisplayMs;
+            if ($('cfg-wheel-result')) $('cfg-wheel-result').value = cfg.effects.wheel.resultDisplayMs / 1000;
 
             updatePreview();
         }
