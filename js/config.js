@@ -149,6 +149,46 @@ function initConfigPanel() {
     dateDebutInput.value = formatDateForInput(currentConfig.dateDebut);
     dateCibleInput.value = formatDateForInput(currentConfig.dateCible);
 
+    // Remplace le sélecteur natif par un sélecteur personnalisé (Flatpickr)
+    try {
+        if (window.flatpickr) {
+            // Forcer type="text" pour éviter l'UI native incohérente selon l'OS/navigateur
+            if (dateDebutInput) dateDebutInput.setAttribute('type', 'text');
+            if (dateCibleInput) dateCibleInput.setAttribute('type', 'text');
+
+            const commonOptions = {
+                enableTime: true,
+                time_24hr: true,
+                dateFormat: 'Y-m-d\\TH:i', // identique à datetime-local
+                allowInput: true,
+                clickOpens: true,
+                locale: 'fr',
+            };
+
+            window.flatpickr(dateDebutInput, {
+                ...commonOptions,
+                onChange: (selectedDates, dateStr) => {
+                    dateDebutInput.value = dateStr;
+                    updatePreview();
+                    checkForChanges();
+                }
+            });
+
+            window.flatpickr(dateCibleInput, {
+                ...commonOptions,
+                onChange: (selectedDates, dateStr) => {
+                    dateCibleInput.value = dateStr;
+                    updatePreview();
+                    checkForChanges();
+                }
+            });
+        } else {
+            console.warn('Flatpickr non chargé; le sélecteur natif sera utilisé.');
+        }
+    } catch (e) {
+        console.warn('Erreur lors de l’initialisation du sélecteur de date/heure:', e);
+    }
+
     // Effets -> hydrate UI
     const $ = (id) => {
         const el = document.getElementById(id);
