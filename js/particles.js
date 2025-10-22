@@ -2,7 +2,6 @@ const emojiImages = [
     "https://cdn3.emoji.gg/emojis/PepeHands.png",
     "https://cdn3.emoji.gg/emojis/3808-prayge.png",
     "https://cdn3.emoji.gg/emojis/4042_shyemote.png",
-    "https://cdn.frankerfacez.com/emoticon/381875/4",
     "https://cdn.7tv.app/emote/01F6MQ33FG000FFJ97ZB8MWV52/2x.avif",
     "https://cdn.7tv.app/emote/01FS5ZCFG0000500DPPCXJWCP8/2x.avif",
     "https://cdn.7tv.app/emote/01FB4S3QMG0001AXCAFYDEG758/2x.avif",
