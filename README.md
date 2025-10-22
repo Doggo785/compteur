@@ -16,7 +16,6 @@ Ce projet est une application web interactive qui affiche un compte à rebours v
   - **Thèmes inclus** : Default (original) et Cyberpunk (néon futuriste)
   - **Créez vos thèmes** : Personnalisez toutes les couleurs
   - **Import/Export** : Partagez vos créations
-  - **Voir [THEMES_README.md](THEMES_README.md) pour plus de détails**
 - **✨ Effets avancés** :
   - **Particules magnétiques** : Particules suivant la souris avec attraction magnétique
   - **Effet Matrix** : Transition Matrix déclenchée par la roue (segment dédié "MATRIX", durée ~25s)
@@ -64,14 +63,6 @@ Quand il reste moins de 10% du temps total :
 - **Glitch effect** sur le titre et le timer
 - **Pulsation rouge** du conteneur
 - **Barres rouges** pulsantes
-- **Effet Matrix** plus fréquent
-- **Distorsion chromatique** RGB
-
-### 🧪 Test du Mode Critique
-Pour tester le mode critique sans attendre, ouvrez la console du navigateur et tapez :
-```javascript
-advancedEffects.testCriticalMode()
-```
 
 ## 🐛 Mode Debug
 
