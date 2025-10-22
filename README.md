@@ -12,6 +12,11 @@ Ce projet est une application web interactive qui affiche un compte à rebours v
 - **La roue** : Une roue interactive qui génère des effets supplémentaire si le HYPE MODE est activé.
 - **Hype mode** : Mode activable qui intensifie les animations (plus de particules, couleurs vives).
 - **📅 Panneau de configuration** : Interface pour modifier les dates sans toucher au code, avec sauvegarde automatique.
+- **🎨 Système de thèmes** : Personnalisez l'apparence avec des thèmes prédéfinis ou créez les vôtres !
+  - **Thèmes inclus** : Default (original) et Cyberpunk (néon futuriste)
+  - **Créez vos thèmes** : Personnalisez toutes les couleurs
+  - **Import/Export** : Partagez vos créations
+  - **Voir [THEMES_README.md](THEMES_README.md) pour plus de détails**
 - **✨ Effets avancés** :
   - **Particules magnétiques** : Particules suivant la souris avec attraction magnétique
   - **Effet Matrix** : Transition Matrix déclenchée par la roue (segment dédié "MATRIX", durée ~25s)

@@ -41,6 +41,40 @@
 
             <hr style="border-color: rgba(255,255,255,0.15); margin: 24px 0;">
 
+            <h2>🎨 Thème</h2>
+            
+            <div class="config-section">
+                <label for="theme-select">Sélectionner un thème</label>
+                <select id="theme-select" class="theme-select">
+                    <option value="default">Default</option>
+                    <option value="cyberpunk">Cyberpunk</option>
+                </select>
+            </div>
+            
+            <div class="config-section theme-buttons">
+                <button id="create-theme-btn" class="btn-theme" title="Créer un nouveau thème basé sur le thème actuel">
+                    ➕ Créer un thème
+                </button>
+                <button id="edit-theme-btn" class="btn-theme" title="Modifier le thème sélectionné" disabled>
+                    ✏️ Éditer
+                </button>
+                <button id="delete-theme-btn" class="btn-theme btn-theme-danger" title="Supprimer le thème sélectionné" disabled>
+                    🗑️ Supprimer
+                </button>
+            </div>
+            
+            <div class="config-section theme-buttons">
+                <button id="export-theme-btn" class="btn-theme" title="Exporter le thème en fichier JSON">
+                    📤 Exporter
+                </button>
+                <button id="import-theme-btn" class="btn-theme" title="Importer un thème depuis un fichier JSON">
+                    📥 Importer
+                </button>
+                <input type="file" id="import-theme-file" accept=".json" style="display: none;">
+            </div>
+
+            <hr style="border-color: rgba(255,255,255,0.15); margin: 24px 0;">
+
             <div class="config-header-with-reset">
                 <h2>🎛️ Effets</h2>
                 <button id="reset-all-effects" class="btn-reset-all" title="Réinitialiser tous les effets">🔄 Tout réinitialiser</button>
@@ -241,7 +275,23 @@
         </div>
     </div>
 
+    <!-- Modal d'édition de thème -->
+    <div id="theme-editor-modal" class="theme-editor-modal">
+        <div class="theme-editor-content">
+            <div class="theme-editor-header">
+                <h2>🎨 Éditeur de Thème</h2>
+                <button id="close-theme-editor" class="config-close-btn">✕</button>
+            </div>
+            <div class="theme-color-grid"></div>
+            <div class="theme-editor-actions">
+                <button id="cancel-theme-edit" class="btn btn-secondary">Annuler</button>
+                <button id="save-theme-edit" class="btn btn-primary">💾 Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <script src="js/themes.js"></script>
     <script src="js/config.js"></script>
     <script src="js/main.js"></script>
     <script src="js/particles.js"></script>
@@ -250,8 +300,11 @@
     <script src="js/advancedEffects.js"></script>
     <script src="js/debug.js"></script>
     <script>
-        // Initialise le mode Debug après le chargement de tous les scripts
+        // Initialise le système de thèmes et le mode Debug après le chargement de tous les scripts
         document.addEventListener('DOMContentLoaded', () => {
+            if (typeof initThemeSystem === 'function') {
+                initThemeSystem();
+            }
             if (typeof initDebugMode === 'function') {
                 initDebugMode();
             }
