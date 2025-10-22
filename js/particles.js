@@ -1,6 +1,5 @@
 const emojiImages = [
     "https://cdn3.emoji.gg/emojis/PepeHands.png",
-    "https://cdn.frankerfacez.com/emoticon/619207/4",
     "https://cdn3.emoji.gg/emojis/3808-prayge.png",
     "https://cdn3.emoji.gg/emojis/4042_shyemote.png",
     "https://cdn.frankerfacez.com/emoticon/381875/4",
